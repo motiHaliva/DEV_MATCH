@@ -25,7 +25,15 @@ export const signUp = async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    res.status(201).json({ token, user: { id: newUser.id, role: newUser.role, email: newUser.email } });
+ res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'strict',
+    maxAge: 1000 * 60 * 60 * 24 * 7, 
+  })
+  .status(201)
+  .json({ user: { id: newUser.id, role: newUser.role, email: newUser.email } });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -48,8 +56,12 @@ export const login = async (req, res) => {
       JWT_SECRET,
       { expiresIn: '7d' }
     );
-
-    res.json({ token, user: { id: user.id, role: user.role, email: user.email } });
+     res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'strict',
+    maxAge: 1000 * 60 * 60 * 24 * 7, 
+  })
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -57,6 +69,11 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  // ב־JWT פשוט נמחק את הטוקן בצד הלקוח
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  });
   res.json({ message: 'Logged out' });
 };
+

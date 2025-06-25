@@ -6,6 +6,7 @@ import projectRoutes from './routes/ProjectRoutes.js';
 import requestsRoutes from './routes/RequestsRoutes.js';
 import AuthRoutes from './routes/AuthRoutes.js';
 import AuthMiddleware from './middleware/AuthMiddleware.js';
+import cookieParser from 'cookie-parser';
 
 
 
@@ -14,14 +15,12 @@ import AuthMiddleware from './middleware/AuthMiddleware.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
+app.use(cookieParser());
 app.use('/auth', AuthRoutes);
 app.use('/users',AuthMiddleware, userRoutes);
 app.use('/freelancers',AuthMiddleware, freelancerRoutes);
 app.use('/projects',AuthMiddleware, projectRoutes);
 app.use('/requests',AuthMiddleware, requestsRoutes);
-
-
-
 
 
 
