@@ -1,7 +1,7 @@
 import express from 'express';
-const router = express.Router();
+import { authorizeRole, authorizeSelfOrAdmin } from '../middleware/Authorize.js';
 
-import{
+import {
     getRequestById,
     createRequest,
     deleteRequest,
@@ -9,15 +9,16 @@ import{
     rejectRequest,
     getRequestsByFreelancer,
     getRequestsByClient
-} from '../controllers/RequestsController.js'
+} from '../controllers/RequestsController.js';
 
+const router = express.Router();
 
-router.get('/:id', getRequestById);
-router.post('/', createRequest);
-router.delete('/:id', deleteRequest);
-router.put('/accept/:id', acceptRequest);
-router.put('/reject/:id', rejectRequest);
-router.get('/freelancer/:freelancerId', getRequestsByFreelancer);
-router.get('/client/:clientId', getRequestsByClient);
+router.get('/:id', authorizeSelfOrAdmin, getRequestById);
+router.post('/', authorizeRole('client'), createRequest);
+router.delete('/:id', authorizeSelfOrAdmin, deleteRequest);
+router.put('/accept/:id', authorizeRole('freelancer'), acceptRequest);
+router.put('/reject/:id', authorizeRole('freelancer'), rejectRequest);
+router.get('/freelancer/:freelancerId', authorizeRole('freelancer'), getRequestsByFreelancer);
+router.get('/client/:clientId', authorizeRole('client'), getRequestsByClient);
 
-export default router;  
+export default router;

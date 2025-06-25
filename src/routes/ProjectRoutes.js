@@ -1,12 +1,22 @@
 import express from 'express';
+import { authorizeRole, authorizeSelfOrAdmin } from '../middleware/Authorize.js';
+import {
+  getAllProjects,
+  getProjectById,
+  createProject,
+  updateProject,
+  deleteProject
+} from '../controllers/ProjectController.js';
+
 const router = express.Router();
 
-import { getAllProjects, getProjectById,createProject,updateProject,deleteProject } from '../controllers/ProjectController.js';
+router.get('/', getAllProjects); 
+router.get('/:id', getProjectById); 
 
-router.get('/', getAllProjects);
-router.get('/:id', getProjectById);
-router.post('/', createProject);
-router.put('/:id', updateProject);
-router.delete('/:id', deleteProject);
+router.post('/', authorizeRole('client'), createProject);
+
+router.put('/:id', authorizeSelfOrAdmin, updateProject);
+
+router.delete('/:id', authorizeSelfOrAdmin, deleteProject);
 
 export default router;
