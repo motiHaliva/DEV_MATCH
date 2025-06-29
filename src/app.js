@@ -8,10 +8,6 @@ import AuthRoutes from './routes/AuthRoutes.js';
 import AuthMiddleware from './middleware/AuthMiddleware.js';
 import cookieParser from 'cookie-parser';
 
-
-
-
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
@@ -21,8 +17,6 @@ app.use('/users',AuthMiddleware, userRoutes);
 app.use('/freelancers',AuthMiddleware, freelancerRoutes);
 app.use('/projects',AuthMiddleware, projectRoutes);
 app.use('/requests',AuthMiddleware, requestsRoutes);
-
-
 
 app.listen(PORT, async () => {
   console.log(`Server is running on http://localhost:${PORT}`);

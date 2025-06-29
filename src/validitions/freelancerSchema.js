@@ -1,8 +1,8 @@
 import Joi from "joi";
 
 const freelancerSchema = Joi.object({
-  user_id: Joi.number().integer().required(),
 
+  user_id: Joi.number().integer().positive().optional(),
   is_available: Joi.boolean().default(true),
 
   headline: Joi.string().max(255).required(),

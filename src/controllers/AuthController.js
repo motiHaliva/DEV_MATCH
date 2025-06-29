@@ -51,17 +51,21 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
 
+
     const token = jwt.sign(
       { id: user.id, role: user.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
+  
      res.cookie('token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', 
     sameSite: 'strict',
     maxAge: 1000 * 60 * 60 * 24 * 7, 
   })
+  .json({ user: { id: user.id, role: user.role, email: user.email } });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

@@ -1,23 +1,29 @@
 import express from 'express';
-import { authorizeRole,authorizeSelfOrAdmin } from '../middleware/Authorize.js';
+import { authorizeRole, authorizeSelfOrAdmin } from '../middleware/Authorize.js';
 
 import {
   getAllFreelancers,
-  getFreelancerById,
   createFreelancer,
   updateFreelancer,
-  deleteFreelancer
+  deleteFreelancer,
+  getPublicFreelancerProfile,
+  getMyFreelancerProfile,
+  updateMyFreelancerProfile
 } from '../controllers/FreelancerController.js';
 
 const router = express.Router();
 
+router.get('/me', getMyFreelancerProfile);
+
+router.put('/me', updateMyFreelancerProfile);
+
 router.get('/', getAllFreelancers);
-router.get('/:id', getFreelancerById);
 
+router.get('/public/:id', getPublicFreelancerProfile);
 
-router.post('/', authorizeRole('client', 'admin'), createFreelancer);
+router.post('/', authorizeRole('freelancer', 'admin'), createFreelancer);
 
-router.put('/:id', authorizeRole('freelancer', 'admin'), updateFreelancer);
+router.put('/:id', authorizeSelfOrAdmin, updateFreelancer);
 
 router.delete('/:id', authorizeRole('admin'), deleteFreelancer);
 

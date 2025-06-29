@@ -4,6 +4,7 @@ class BaseModel {
   constructor(tableName) {
     this.tableName = tableName;
   }
+  
 
   // יצירת רשומה חדשה
   async create(data) {
@@ -84,6 +85,27 @@ class BaseModel {
     const result = await pool.query(query, [id]);
     return result.rows[0];
   }
+
+async findManyBy(field, value) {
+  const query = `
+    SELECT * FROM ${this.tableName}
+    WHERE ${field} = $1 AND deleted_at IS NULL;
+  `;
+  const result = await pool.query(query, [value]);
+  return result.rows;
+}
+
+
+static async  runRawQuery(query, params = []) {
+  try {
+    const result = await pool.query(query, params);
+    return result.rows;
+  } catch (err) {
+    console.error('Database query error:', err);
+    throw err;
+  }
+}
+
 }
 
 export default BaseModel;

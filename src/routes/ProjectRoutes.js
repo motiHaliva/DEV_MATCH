@@ -5,12 +5,21 @@ import {
   getProjectById,
   createProject,
   updateProject,
-  deleteProject
+  deleteProject,
+  getProjectsByUserId,
+  getMyProjects
 } from '../controllers/ProjectController.js';
 
 const router = express.Router();
 
+
+
+router.get('/me', authorizeRole('client'), getMyProjects);
+
+router.get('/user/:id', getProjectsByUserId); 
+
 router.get('/', getAllProjects); 
+
 router.get('/:id', getProjectById); 
 
 router.post('/', authorizeRole('client'), createProject);

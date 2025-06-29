@@ -6,19 +6,28 @@ import {
   getUserById,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  getMyProfile,
+  updateMyProfile,
+  getPublicUserProfile
 } from '../controllers/UserController.js';
 
 const router = express.Router();
 
+router.get('/me', getMyProfile);  
+
+router.put('/me', updateMyProfile);
+
+router.get('/public/:id', getPublicUserProfile);            
+
 router.get('/', authorizeRole('admin'), getAllUsers);
 
-router.get('/:id', authorizeSelfOrAdmin, getUserById);
-
 router.post('/', authorizeRole('admin'), createUser);
+
+router.get('/:id', authorizeSelfOrAdmin, getUserById);
 
 router.put('/:id', authorizeSelfOrAdmin, updateUser);
 
 router.delete('/:id', authorizeSelfOrAdmin, deleteUser);
-
+       
 export default router;

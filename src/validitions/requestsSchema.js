@@ -1,7 +1,6 @@
 import Joi from "joi";
 
 const requestSchema = Joi.object({
-  from_user_id: Joi.number().integer().required(),
   to_user_id: Joi.number().integer().required(),
   project_id: Joi.number().integer().allow(null), // לא חובה
   status: Joi.string()
