@@ -8,7 +8,10 @@ const fields = [
   "bio",
   "experience_years",
   "location",
-  "created_at"
+  "created_at",
+  "deleted_at",
+  "rating",
+  "rating_count",
 ];
 
 const FreelancerModel = new BaseModel("freelancers", fields);

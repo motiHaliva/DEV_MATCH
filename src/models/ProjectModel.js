@@ -7,7 +7,10 @@ const fields = [
   'deadline',
   'is_open',
   'created_at',
-  'project_type'
+  'project_type',
+  "client_id",
+  "deleted_at",
+  "updated_at",
 ];
 
 

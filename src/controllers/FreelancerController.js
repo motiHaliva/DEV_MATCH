@@ -14,6 +14,7 @@ export const getAllFreelancers = async (req, res) => {
       max_experience,
       page = 1,
       limit = 10,
+      sort,
     } = req.query;
 
     const values = [];
@@ -48,6 +49,23 @@ export const getAllFreelancers = async (req, res) => {
       index++;
     }
 
+    // מיון
+    let orderByClause = `ORDER BY freelancers.id`;
+    switch (sort) {
+      case "rating_desc":
+        orderByClause = `ORDER BY freelancers.rating DESC NULLS LAST`;
+        break;
+      case "rating_asc":
+        orderByClause = `ORDER BY freelancers.rating ASC NULLS LAST`;
+        break;
+      case "experience_desc":
+        orderByClause = `ORDER BY freelancers.experience_years DESC`;
+        break;
+      case "experience_asc":
+        orderByClause = `ORDER BY freelancers.experience_years ASC`;
+        break;
+    }
+
     // ספירת סך הפרילנסרים
     const countQuery = `
       SELECT COUNT(*) 
@@ -58,7 +76,7 @@ export const getAllFreelancers = async (req, res) => {
     const countResult = await BaseModel.runRawQuery(countQuery, values);
     const totalCount = parseInt(countResult[0].count);
 
-    // שאילתת נתונים עם פאגינציה
+    // פאגינציה
     const limitInt = parseInt(limit);
     const offset = (parseInt(page) - 1) * limitInt;
 
@@ -67,7 +85,7 @@ export const getAllFreelancers = async (req, res) => {
       FROM freelancers
       JOIN users ON freelancers.user_id = users.id
       ${whereClause}
-      ORDER BY freelancers.id
+      ${orderByClause}
       LIMIT $${index} OFFSET $${index + 1}
     `;
 
@@ -85,7 +103,6 @@ export const getAllFreelancers = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
 
 export const createFreelancer = async (req, res) => {
   try {

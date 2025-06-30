@@ -7,14 +7,22 @@ export async function seedUsers(count = 5) {
 
   for (let i = 0; i < count; i++) {
     const password = await bcrypt.hash('password123', 10);
+    const now = new Date();
+
+
     const user = await UserModel.create({
       firstname: faker.person.firstName(),
       lastname: faker.person.lastName(),
-      email: faker.internet.email(),
+      email: faker.internet.email().toLowerCase(),
       password,
       role: i % 2 === 0 ? 'client' : 'freelancer',
       bio: faker.lorem.paragraph(),
+
+      created_at: now,
+      updated_at: now,
+      deleted_at: null,
     });
+
     users.push(user);
   }
 

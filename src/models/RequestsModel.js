@@ -7,6 +7,8 @@ const fields = [
   "project_id",
   "created_at",
   "status",
+  "deleted_at",
+  "request_type",
 ];
 
 const RequestsModel = new BaseModel("requests", fields);

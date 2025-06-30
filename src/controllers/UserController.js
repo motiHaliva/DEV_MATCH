@@ -12,7 +12,12 @@ const sanitizeUserOutput = (user) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    const { search, role, limit = 10, page = 1 } = req.query;
+    const {
+      search,
+      role,
+      limit = 10,
+      page = 1,
+    } = req.query;
 
     const values = [];
     let index = 1;
@@ -25,7 +30,7 @@ export const getAllUsers = async (req, res) => {
         lastname ILIKE $${index} OR
         email ILIKE $${index}
       )`;
-      values.push(`%${search}`);
+      values.push(`%${search}%`);
       index++;
     }
 
@@ -35,7 +40,6 @@ export const getAllUsers = async (req, res) => {
       index++;
     }
 
-
     const countQuery = `
       SELECT COUNT(*) FROM users
       ${whereClause}
@@ -43,7 +47,6 @@ export const getAllUsers = async (req, res) => {
     const countResult = await BaseModel.runRawQuery(countQuery, values);
     const totalCount = parseInt(countResult[0].count);
 
-    // שאילתת נתונים עם פאגינציה
     const limitInt = parseInt(limit);
     const offset = (parseInt(page) - 1) * limitInt;
 
@@ -53,6 +56,7 @@ export const getAllUsers = async (req, res) => {
       ORDER BY id
       LIMIT $${index} OFFSET $${index + 1}
     `;
+
     const users = await BaseModel.runRawQuery(dataQuery, [...values, limitInt, offset]);
     const safeUsers = users.map(sanitizeUserOutput);
 
@@ -68,6 +72,7 @@ export const getAllUsers = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 
 

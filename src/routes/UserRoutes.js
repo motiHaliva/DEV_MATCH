@@ -22,7 +22,7 @@ router.get('/public/:id', getPublicUserProfile);
 
 router.get('/', authorizeRole('admin'), getAllUsers);
 
-router.post('/', authorizeRole('admin'), createUser);
+router.post('/', createUser);
 
 router.get('/:id', authorizeSelfOrAdmin, getUserById);
 

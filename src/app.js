@@ -5,11 +5,14 @@ import freelancerRoutes from './routes/FreelancerRoutes.js';
 import projectRoutes from './routes/ProjectRoutes.js';
 import requestsRoutes from './routes/RequestsRoutes.js';
 import AuthRoutes from './routes/AuthRoutes.js';
-import AuthMiddleware from './middleware/AuthMiddleware.js';
+import AuthMiddleware from './middleware/AuthMiddleware.js'; 
+import SkillRoutes from './routes/SkillRoutes.js';
+import TitleRoutes from './routes/TitleRoutes.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 app.use(express.json());
 app.use(cookieParser());
 app.use('/auth', AuthRoutes);
@@ -17,6 +20,8 @@ app.use('/users',AuthMiddleware, userRoutes);
 app.use('/freelancers',AuthMiddleware, freelancerRoutes);
 app.use('/projects',AuthMiddleware, projectRoutes);
 app.use('/requests',AuthMiddleware, requestsRoutes);
+app.use('/skills', AuthMiddleware, SkillRoutes);
+app.use('/titles', AuthMiddleware, TitleRoutes);
 
 app.listen(PORT, async () => {
   console.log(`Server is running on http://localhost:${PORT}`);
