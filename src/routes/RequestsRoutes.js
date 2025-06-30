@@ -13,7 +13,6 @@ import {
     getMyCreatedRequests,
     updateRequestStatus
 } from '../controllers/RequestsController.js';
-import FreelancerModel from '../models/FreelancerModel.js';
 
 const router = express.Router();
 
@@ -46,7 +45,7 @@ router.put('/status/:id', authorizeRole('admin'), updateRequestStatus);
 router.delete('/:id', deleteRequest);
 
 // שליפת בקשות לפי פרילנסר (למנהלים או לפרילנסר עצמו)
-router.get('/freelancer/:freelancerId', authorizeSelfOrAdmin, getRequestsByFreelancer);
+router.get('/freelancer/:freelancerId', getRequestsByFreelancer);
 
 // שליפת בקשות לפי לקוח (למנהלים או ללקוח עצמו)
 router.get('/client/:clientId', getRequestsByClient);

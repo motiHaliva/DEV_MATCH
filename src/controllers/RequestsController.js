@@ -61,7 +61,6 @@ export const getRequestById = async (req, res) => {
         r.*,
         p.title as project_title,
         p.description as project_description,
-        p.budget as project_budget,
         from_user.firstname as client_firstname,
         from_user.lastname as client_lastname,
         from_user.email as client_email,
@@ -191,7 +190,6 @@ export const getRequestsByFreelancer = async (req, res) => {
         r.*,
         p.title as project_title,
         p.description as project_description,
-        p.budget as project_budget,
         from_user.firstname as client_firstname,
         from_user.lastname as client_lastname
       FROM requests r
@@ -310,7 +308,6 @@ export const getMyRequests = async (req, res) => {
         r.*,
         p.title as project_title,
         p.description as project_description,
-        p.budget as project_budget,
         from_user.firstname as sender_firstname,
         from_user.lastname as sender_lastname,
         from_user.email as sender_email,
@@ -372,7 +369,6 @@ export const getMyCreatedRequests = async (req, res) => {
         r.*,
         p.title as project_title,
         p.description as project_description,
-        p.budget as project_budget,
         to_user.firstname as recipient_firstname,
         to_user.lastname as recipient_lastname,
         to_user.email as recipient_email,
