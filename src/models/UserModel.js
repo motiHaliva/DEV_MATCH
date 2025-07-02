@@ -11,7 +11,7 @@ const fields = [
   "created_at",
   "updated_at",
   "deleted_at",
- 
+  "profile_image"
 ];
 
 const UserModel = new BaseModel("users", fields);

@@ -10,70 +10,34 @@ const sanitizeUserOutput = (user) => {
 };
 
 
+
+
 export const getAllUsers = async (req, res) => {
   try {
-    const {
-      search,
-      role,
-      limit = 10,
-      page = 1,
-    } = req.query;
+    const {search,role,limit = 10,page = 1,} = req.query;
 
+    let where = 'deleted_at IS NULL';
     const values = [];
-    let index = 1;
-
-    let whereClause = `WHERE deleted_at IS NULL`;
 
     if (search) {
-      whereClause += ` AND (
-        firstname ILIKE $${index} OR
-        lastname ILIKE $${index} OR
-        email ILIKE $${index}
-      )`;
+      where += ` AND (firstname ILIKE $${values.length + 1} OR lastname ILIKE $${values.length + 1} OR email ILIKE $${values.length + 1})`;
       values.push(`%${search}%`);
-      index++;
     }
-
     if (role) {
-      whereClause += ` AND role::text = $${index}`;
+      where += ` AND role::text = $${values.length + 1}`;
       values.push(role);
-      index++;
     }
 
-    const countQuery = `
-      SELECT COUNT(*) FROM users
-      ${whereClause}
-    `;
-    const countResult = await BaseModel.runRawQuery(countQuery, values);
-    const totalCount = parseInt(countResult[0].count);
+    const result = await BaseModel.paginate('users', where, values, page, limit, 'id');
 
-    const limitInt = parseInt(limit);
-    const offset = (parseInt(page) - 1) * limitInt;
+    result.data = result.data.map(sanitizeUserOutput);
 
-    const dataQuery = `
-      SELECT * FROM users
-      ${whereClause}
-      ORDER BY id
-      LIMIT $${index} OFFSET $${index + 1}
-    `;
-
-    const users = await BaseModel.runRawQuery(dataQuery, [...values, limitInt, offset]);
-    const safeUsers = users.map(sanitizeUserOutput);
-
-    res.json({
-      totalCount,
-      page: parseInt(page),
-      pageSize: limitInt,
-      totalPages: Math.ceil(totalCount / limitInt),
-      data: safeUsers,
-    });
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 };
-
-
 
 
 
@@ -200,6 +164,7 @@ export const getPublicUserProfile = async (req, res) => {
           u.lastname,
           u.email,
           u.role,
+          u.profile_image,
           u.created_at,
           COUNT(DISTINCT p.id) as total_projects,
           COUNT(DISTINCT CASE WHEN p.is_open = true THEN p.id END) as open_projects,
@@ -223,11 +188,13 @@ export const getPublicUserProfile = async (req, res) => {
           u.email,
           u.role,
           u.created_at,
+          u.profile_image,
           f.headline,
           f.bio,
           f.experience_years,
           f.is_available,
           f.location
+        
         FROM users u
         JOIN freelancers f ON u.id = f.user_id
         WHERE u.id = $1 AND u.deleted_at IS NULL AND f.deleted_at IS NULL

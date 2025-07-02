@@ -9,6 +9,7 @@ const fields = [
   "experience_years",
   "location",
   "created_at",
+  "updated_at",
   "deleted_at",
   "rating",
   "rating_count",

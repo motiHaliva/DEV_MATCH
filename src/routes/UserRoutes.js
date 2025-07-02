@@ -20,7 +20,7 @@ router.put('/me', updateMyProfile);
 
 router.get('/public/:id', getPublicUserProfile);            
 
-router.get('/', authorizeRole('admin'), getAllUsers);
+router.get('/', getAllUsers);
 
 router.post('/', createUser);
 

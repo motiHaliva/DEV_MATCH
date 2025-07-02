@@ -5,9 +5,9 @@ import { getFreelancerReviews, addFreelancerReview } from "../controllers/freela
 const router = express.Router();
 
 // קבלת ביקורות עם פאגינציה
-router.get("/:id/reviews", getFreelancerReviews);
+router.get("/:id", getFreelancerReviews);
 
 // הוספת דירוג ותגובה (משתמש מחובר)
-router.post("/:id/reviews", addFreelancerReview);
+router.post("/:id", addFreelancerReview);
 
 export default router;

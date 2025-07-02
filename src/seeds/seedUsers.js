@@ -9,7 +9,6 @@ export async function seedUsers(count = 5) {
     const password = await bcrypt.hash('password123', 10);
     const now = new Date();
 
-
     const user = await UserModel.create({
       firstname: faker.person.firstName(),
       lastname: faker.person.lastName(),
@@ -17,7 +16,7 @@ export async function seedUsers(count = 5) {
       password,
       role: i % 2 === 0 ? 'client' : 'freelancer',
       bio: faker.lorem.paragraph(),
-
+      profile_image: faker.image.avatar(),
       created_at: now,
       updated_at: now,
       deleted_at: null,

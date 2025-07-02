@@ -94,217 +94,139 @@ export const getRequestById = async (req, res) => {
 export const getAllRequests = async (req, res) => {
   try {
     const { status, project_id, page = 1, limit = 10 } = req.query;
-    
     const values = [];
-    let index = 1;
-    let whereClause = `WHERE r.deleted_at IS NULL`;
-    
+    let where = 'r.deleted_at IS NULL';
+
     if (status) {
-      whereClause += ` AND r.status = $${index}`;
+      where += ` AND r.status = $${values.length + 1}`;
       values.push(status);
-      index++;
     }
-    
     if (project_id) {
-      whereClause += ` AND r.project_id = $${index}`;
+      where += ` AND r.project_id = $${values.length + 1}`;
       values.push(project_id);
-      index++;
     }
-    
-    // ספירה
-    const countQuery = `
-      SELECT COUNT(*) 
-      FROM requests r
-      ${whereClause}
-    `;
-    const countResult = await BaseModel.runRawQuery(countQuery, values);
-    const totalCount = parseInt(countResult[0].count);
-    
-    // נתונים
-    const limitInt = parseInt(limit);
-    const offset = (parseInt(page) - 1) * limitInt;
-    
-    const dataQuery = `
-      SELECT 
+
+    const result = await BaseModel.paginateRaw({
+      select: `
         r.*,
         p.title as project_title,
         from_user.firstname as client_firstname,
         from_user.lastname as client_lastname,
         to_user.firstname as freelancer_firstname,
         to_user.lastname as freelancer_lastname
-      FROM requests r
-      JOIN projects p ON r.project_id = p.id
-      JOIN users from_user ON r.from_user_id = from_user.id
-      JOIN users to_user ON r.to_user_id = to_user.id
-      ${whereClause}
-      ORDER BY r.created_at DESC
-      LIMIT $${index} OFFSET $${index + 1}
-    `;
-    
-    const requests = await BaseModel.runRawQuery(dataQuery, [...values, limitInt, offset]);
-  
-    res.json({
-      totalCount,
-      page: parseInt(page),
-      pageSize: limitInt,
-      totalPages: Math.ceil(totalCount / limitInt),
-      data: requests,
+      `,
+      from: `
+        requests r
+        JOIN projects p ON r.project_id = p.id
+        JOIN users from_user ON r.from_user_id = from_user.id
+        JOIN users to_user ON r.to_user_id = to_user.id
+      `,
+      where,
+      values,
+      page,
+      limit,
+      orderBy: 'r.created_at DESC'
     });
+
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// קבלת בקשות לפי פרילנסר (to_user_id)
 export const getRequestsByFreelancer = async (req, res) => {
   try {
     const { status, page = 1, limit = 10 } = req.query;
     const freelancerId = req.params.freelancerId;
-    
     const values = [freelancerId];
-    let index = 2;
-    let whereClause = `WHERE r.to_user_id = $1 AND r.deleted_at IS NULL`;
-    
+    let where = 'r.to_user_id = $1 AND r.deleted_at IS NULL';
+
     if (status) {
-      whereClause += ` AND r.status = $${index}`;
+      where += ` AND r.status = $${values.length + 1}`;
       values.push(status);
-      index++;
     }
-    
-    // ספירה
-    const countQuery = `
-      SELECT COUNT(*) 
-      FROM requests r
-      ${whereClause}
-    `;
-    const countResult = await BaseModel.runRawQuery(countQuery, values);
-    const totalCount = parseInt(countResult[0].count);
-    
-    // נתונים
-    const limitInt = parseInt(limit);
-    const offset = (parseInt(page) - 1) * limitInt;
-    
-    const dataQuery = `
-      SELECT 
+
+    const result = await BaseModel.paginateRaw({
+      select: `
         r.*,
         p.title as project_title,
         p.description as project_description,
         from_user.firstname as client_firstname,
         from_user.lastname as client_lastname
-      FROM requests r
-      JOIN projects p ON r.project_id = p.id
-      JOIN users from_user ON r.from_user_id = from_user.id
-      ${whereClause}
-      ORDER BY r.created_at DESC
-      LIMIT $${index} OFFSET $${index + 1}
-    `;
-    
-    const requests = await BaseModel.runRawQuery(dataQuery, [...values, limitInt, offset]);
-    
-    res.json({
-      totalCount,
-      page: parseInt(page),
-      pageSize: limitInt,
-      totalPages: Math.ceil(totalCount / limitInt),
-      data: requests,
+      `,
+      from: `
+        requests r
+        JOIN projects p ON r.project_id = p.id
+        JOIN users from_user ON r.from_user_id = from_user.id
+      `,
+      where,
+      values,
+      page,
+      limit,
+      orderBy: 'r.created_at DESC'
     });
+
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// קבלת בקשות לפי לקוח (from_user_id)
 export const getRequestsByClient = async (req, res) => {
   try {
     const { status, page = 1, limit = 10 } = req.query;
     const clientId = req.params.clientId;
-    
     const values = [clientId];
-    let index = 2;
-    let whereClause = `WHERE r.from_user_id = $1 AND r.deleted_at IS NULL`;
-    
+    let where = 'r.from_user_id = $1 AND r.deleted_at IS NULL';
+
     if (status) {
-      whereClause += ` AND r.status = $${index}`;
+      where += ` AND r.status = $${values.length + 1}`;
       values.push(status);
-      index++;
     }
-    
-    // ספירה
-    const countQuery = `
-      SELECT COUNT(*) 
-      FROM requests r
-      ${whereClause}
-    `;
-    const countResult = await BaseModel.runRawQuery(countQuery, values);
-    const totalCount = parseInt(countResult[0].count);
-    
-    // נתונים
-    const limitInt = parseInt(limit);
-    const offset = (parseInt(page) - 1) * limitInt;
-    
-    const dataQuery = `
-      SELECT 
+
+    const result = await BaseModel.paginateRaw({
+      select: `
         r.*,
         p.title as project_title,
         p.description as project_description,
         to_user.firstname as freelancer_firstname,
         to_user.lastname as freelancer_lastname
-      FROM requests r
-      JOIN projects p ON r.project_id = p.id
-      JOIN users to_user ON r.to_user_id = to_user.id
-      ${whereClause}
-      ORDER BY r.created_at DESC
-      LIMIT $${index} OFFSET $${index + 1}
-    `;
-    
-    const requests = await BaseModel.runRawQuery(dataQuery, [...values, limitInt, offset]);
-    
-    res.json({
-      totalCount,
-      page: parseInt(page),
-      pageSize: limitInt,
-      totalPages: Math.ceil(totalCount / limitInt),
-      data: requests,
+      `,
+      from: `
+        requests r
+        JOIN projects p ON r.project_id = p.id
+        JOIN users to_user ON r.to_user_id = to_user.id
+      `,
+      where,
+      values,
+      page,
+      limit,
+      orderBy: 'r.created_at DESC'
     });
+
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// קבלת הבקשות שלי - בקשות שנשלחו אליי (לכל המשתמשים)
 export const getMyRequests = async (req, res) => {
   try {
     const { status, page = 1, limit = 10 } = req.query;
     const userId = req.user.id;
-    
     const values = [userId];
-    let index = 2;
-    let whereClause = `WHERE r.to_user_id = $1 AND r.deleted_at IS NULL`;
-    
+    let where = 'r.to_user_id = $1 AND r.deleted_at IS NULL';
+
     if (status) {
-      whereClause += ` AND r.status = ${index}`;
+      where += ` AND r.status = $${values.length + 1}`;
       values.push(status);
-      index++;
     }
-    
-    // ספירה
-    const countQuery = `
-      SELECT COUNT(*) 
-      FROM requests r
-      ${whereClause}
-    `;
-    const countResult = await BaseModel.runRawQuery(countQuery, values);
-    const totalCount = parseInt(countResult[0].count);
-    
-    // נתונים
-    const limitInt = parseInt(limit);
-    const offset = (parseInt(page) - 1) * limitInt;
-    
-    const dataQuery = `
-      SELECT 
+
+    const result = await BaseModel.paginateRaw({
+      select: `
         r.*,
         p.title as project_title,
         p.description as project_description,
@@ -312,60 +234,40 @@ export const getMyRequests = async (req, res) => {
         from_user.lastname as sender_lastname,
         from_user.email as sender_email,
         from_user.role as sender_role
-      FROM requests r
-      JOIN projects p ON r.project_id = p.id
-      JOIN users from_user ON r.from_user_id = from_user.id
-      ${whereClause}
-      ORDER BY r.created_at DESC
-      LIMIT ${index} OFFSET ${index + 1}
-    `;
-    
-    const requests = await BaseModel.runRawQuery(dataQuery, [...values, limitInt, offset]);
-    
-    res.json({
-      totalCount,
-      page: parseInt(page),
-      pageSize: limitInt,
-      totalPages: Math.ceil(totalCount / limitInt),
-      data: requests,
+      `,
+      from: `
+        requests r
+        JOIN projects p ON r.project_id = p.id
+        JOIN users from_user ON r.from_user_id = from_user.id
+      `,
+      where,
+      values,
+      page,
+      limit,
+      orderBy: 'r.created_at DESC'
     });
+
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// קבלת הבקשות שיצרתי - בקשות שיצרתי (לכל המשתמשים)
 export const getMyCreatedRequests = async (req, res) => {
   try {
     const { status, page = 1, limit = 10 } = req.query;
     const userId = req.user.id;
-    
     const values = [userId];
-    let index = 2;
-    let whereClause = `WHERE r.from_user_id = $1 AND r.deleted_at IS NULL`;
-    
+    let where = 'r.from_user_id = $1 AND r.deleted_at IS NULL';
+
     if (status) {
-      whereClause += ` AND r.status = ${index}`;
+      where += ` AND r.status = $${values.length + 1}`;
       values.push(status);
-      index++;
     }
-    
-    // ספירה
-    const countQuery = `
-      SELECT COUNT(*) 
-      FROM requests r
-      ${whereClause}
-    `;
-    const countResult = await BaseModel.runRawQuery(countQuery, values);
-    const totalCount = parseInt(countResult[0].count);
-    
-    // נתונים
-    const limitInt = parseInt(limit);
-    const offset = (parseInt(page) - 1) * limitInt;
-    
-    const dataQuery = `
-      SELECT 
+
+    const result = await BaseModel.paginateRaw({
+      select: `
         r.*,
         p.title as project_title,
         p.description as project_description,
@@ -373,23 +275,20 @@ export const getMyCreatedRequests = async (req, res) => {
         to_user.lastname as recipient_lastname,
         to_user.email as recipient_email,
         to_user.role as recipient_role
-      FROM requests r
-      JOIN projects p ON r.project_id = p.id
-      JOIN users to_user ON r.to_user_id = to_user.id
-      ${whereClause}
-      ORDER BY r.created_at DESC
-      LIMIT ${index} OFFSET ${index + 1}
-    `;
-    
-    const requests = await BaseModel.runRawQuery(dataQuery, [...values, limitInt, offset]);
-    
-    res.json({
-      totalCount,
-      page: parseInt(page),
-      pageSize: limitInt,
-      totalPages: Math.ceil(totalCount / limitInt),
-      data: requests,
+      `,
+      from: `
+        requests r
+        JOIN projects p ON r.project_id = p.id
+        JOIN users to_user ON r.to_user_id = to_user.id
+      `,
+      where,
+      values,
+      page,
+      limit,
+      orderBy: 'r.created_at DESC'
     });
+
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });

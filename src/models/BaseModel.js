@@ -106,6 +106,60 @@ static async  runRawQuery(query, params = []) {
   }
 }
 
+static async paginate(table, where = '1=1', values = [], page = 1, limit = 10, orderBy = 'id') {
+  const offset = (page - 1) * limit;
+  const countQuery = `SELECT COUNT(*) FROM ${table} WHERE ${where}`;
+  const dataQuery = `
+    SELECT * FROM ${table}
+    WHERE ${where}
+    ORDER BY ${orderBy}
+    LIMIT $${values.length + 1} OFFSET $${values.length + 2}
+  `;
+  const [countResult, rows] = await Promise.all([
+    this.runRawQuery(countQuery, values),
+    this.runRawQuery(dataQuery, [...values, limit, offset])
+  ]);
+  const totalCount = parseInt(countResult[0].count);
+  return {
+    totalCount,
+    page: parseInt(page),
+    pageSize: parseInt(limit),
+    totalPages: Math.ceil(totalCount / limit),
+    data: rows
+  };
+}
+static async paginateRaw({ 
+  select, 
+  from, 
+  where = '1=1', 
+  values = [], 
+  page = 1, 
+  limit = 10, 
+  orderBy = 'id DESC' 
+}) {
+  const offset = (page - 1) * limit;
+  const countQuery = `SELECT COUNT(*) FROM ${from} WHERE ${where}`;
+  const dataQuery = `
+    SELECT ${select}
+    FROM ${from}
+    WHERE ${where}
+    ORDER BY ${orderBy}
+    LIMIT $${values.length + 1} OFFSET $${values.length + 2}
+  `;
+  const [countResult, rows] = await Promise.all([
+    this.runRawQuery(countQuery, values),
+    this.runRawQuery(dataQuery, [...values, limit, offset])
+  ]);
+  const totalCount = parseInt(countResult[0].count);
+  return {
+    totalCount,
+    page: parseInt(page),
+    pageSize: parseInt(limit),
+    totalPages: Math.ceil(totalCount / limit),
+    data: rows
+  };
+}
+
 }
 
 export default BaseModel;

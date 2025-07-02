@@ -3,68 +3,44 @@ import projectSchema from "../validitions/projectSchema.js";
 import { sanitizeInput } from "../sanitize/sanitize.js";
 import BaseModel from "../models/BaseModel.js";
 
-
+// שליפת כל הפרויקטים עם פאגינציה, חיפוש וסינון
 export const getAllProjects = async (req, res) => {
   try {
     const { type, search, is_open, page = 1, limit = 10 } = req.query;
 
+    let where = 'deleted_at IS NULL';
     const values = [];
-    let index = 1;
-    let whereClause = `WHERE deleted_at IS NULL`;
 
     if (type) {
-      whereClause += ` AND type = $${index}`;
+      where += ` AND type = $${values.length + 1}`;
       values.push(type);
-      index++;
     }
-
     if (is_open !== undefined) {
-      whereClause += ` AND is_open = $${index}`;
-      values.push(is_open === "true"); 
-      index++;
+      where += ` AND is_open = $${values.length + 1}`;
+      values.push(is_open === "true");
     }
-
     if (search) {
-      whereClause += ` AND (
-        title ILIKE $${index} OR
-        description ILIKE $${index}
-      )`;
+      where += ` AND (title ILIKE $${values.length + 1} OR description ILIKE $${values.length + 1})`;
       values.push(`%${search}%`);
-      index++;
     }
 
-    // ספירת סך הפרויקטים
-    const countQuery = `SELECT COUNT(*) FROM projects ${whereClause}`;
-    const countResult = await BaseModel.runRawQuery(countQuery, values);
-    const totalCount = parseInt(countResult[0].count);
+    const result = await BaseModel.paginate(
+      "projects",
+      where,
+      values,
+      page,
+      limit,
+      "id"
+    );
 
-    // שאילתת נתונים עם פאגינציה
-    const limitInt = parseInt(limit);
-    const offset = (parseInt(page) - 1) * limitInt;
-    
-    const dataQuery = `
-      SELECT * FROM projects 
-      ${whereClause} 
-      ORDER BY id 
-      LIMIT $${index} OFFSET $${index + 1}
-    `;
-    
-    const projects = await BaseModel.runRawQuery(dataQuery, [...values, limitInt, offset]);
-
-    res.json({
-      totalCount,
-      page: parseInt(page),
-      pageSize: limitInt,
-      totalPages: Math.ceil(totalCount / limitInt),
-      data: projects,
-    });
+    res.json(result);
   } catch (err) {
     console.error("❌ Error fetching projects:", err);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-
+// שליפת פרויקט בודד עם פרטי הלקוח והבקשות
 export const getProjectById = async (req, res) => {
   try {
     const projectId = req.params.id;
@@ -114,7 +90,6 @@ export const getProjectById = async (req, res) => {
   }
 };
 
-
 // יצירת פרויקט חדש
 export const createProject = async (req, res) => {
   try {
@@ -130,6 +105,7 @@ export const createProject = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
 // עדכון פרויקט
 export const updateProject = async (req, res) => {
   try {
@@ -164,100 +140,62 @@ export const deleteProject = async (req, res) => {
   }
 };
 
-
+// שליפת כל הפרויקטים של משתמש מסוים (client_id) עם פאגינציה
 export const getProjectsByUserId = async (req, res) => {
   try {
     const userId = req.params.id;
     const { page = 1, limit = 10, is_open } = req.query;
 
+    let where = 'client_id = $1 AND deleted_at IS NULL';
     const values = [userId];
-    let index = 2;
-    let whereClause = `WHERE client_id = $1 AND deleted_at IS NULL`;
 
     if (is_open !== undefined) {
-      whereClause += ` AND is_open = $${index}`;
+      where += ` AND is_open = $${values.length + 1}`;
       values.push(is_open === "true");
-      index++;
     }
 
-    // שאילתת ספירה
-    const countQuery = `SELECT COUNT(*) FROM projects ${whereClause}`;
-    const countResult = await BaseModel.runRawQuery(countQuery, values);
-    const totalCount = parseInt(countResult[0].count);
+    const result = await BaseModel.paginate(
+      "projects",
+      where,
+      values,
+      page,
+      limit,
+      "created_at DESC"
+    );
 
-    const limitInt = parseInt(limit);
-    const offset = (parseInt(page) - 1) * limitInt;
-
-    const dataQuery = `
-      SELECT * FROM projects
-      ${whereClause}
-      ORDER BY created_at DESC
-      LIMIT $${index} OFFSET $${index + 1}
-    `;
-    const projects = await BaseModel.runRawQuery(dataQuery, [...values, limitInt, offset]);
-
-    res.json({
-      totalCount,
-      page: parseInt(page),
-      pageSize: limitInt,
-      totalPages: Math.ceil(totalCount / limitInt),
-      data: projects,
-    });
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-
-
+// שליפת כל הפרויקטים של המשתמש המחובר (client_id) עם פאגינציה
 export const getMyProjects = async (req, res) => {
   try {
     const userId = req.user.id;
     const { page = 1, limit = 10, is_open } = req.query;
-    
+
+    let where = 'client_id = $1 AND deleted_at IS NULL';
     const values = [userId];
-    let index = 2;
-    let whereClause = `WHERE client_id = $1 AND deleted_at IS NULL`;
-    
+
     if (is_open !== undefined) {
-      whereClause += ` AND is_open = $${index}`;
+      where += ` AND is_open = $${values.length + 1}`;
       values.push(is_open === "true");
-      index++;
     }
-    
-    // ספירה
-    const countQuery = `SELECT COUNT(*) FROM projects ${whereClause}`;
-    const countResult = await BaseModel.runRawQuery(countQuery, values);
-    const totalCount = parseInt(countResult[0].count);
-    
-    // נתונים
-    const limitInt = parseInt(limit);
-    const offset = (parseInt(page) - 1) * limitInt;
-    
-    const dataQuery = `
-      SELECT * FROM projects 
-      ${whereClause} 
-      ORDER BY created_at DESC 
-      LIMIT $${index} OFFSET $${index + 1}
-    `;
-    
-    const projects = await BaseModel.runRawQuery(dataQuery, [...values, limitInt, offset]);
-    
-    res.json({
-      totalCount,
-      page: parseInt(page),
-      pageSize: limitInt,
-      totalPages: Math.ceil(totalCount / limitInt),
-      data: projects,
-    });
+
+    const result = await BaseModel.paginate(
+      "projects",
+      where,
+      values,
+      page,
+      limit,
+      "created_at DESC"
+    );
+
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 };
-
-
-
-
-
