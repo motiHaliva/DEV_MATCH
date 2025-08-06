@@ -37,7 +37,6 @@ export const getCommentsByPost = async (
     data = [],
     totalCount = 0,
     page: current_page = 1,
-    pageSize = 10,
     totalPages = 1
   } = response.data;
 

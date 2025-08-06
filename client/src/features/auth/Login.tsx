@@ -33,7 +33,7 @@ export const Login = () => {
   setIsLoading(true);
 
   try {
-    const res = await loginUser(formData); 
+    await loginUser(formData); 
     toast.success("התחברת בהצלחה!");
     navigate("/profile");
   } catch (err: any) {

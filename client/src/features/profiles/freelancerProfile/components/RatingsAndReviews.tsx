@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import Button from "../../../../ui/Button";
-import type { Review, ReviewsSectionProps } from '../../type'
+import Louder from "../../../../ui/Louder"; // שימוש בקומפוננטת טעינה שלך
+import type { Review, ReviewsSectionProps } from '../../type';
 import { fetchFreelancerReviews } from "../../../../api/freelancersApi";
-import { toast } from "react-toastify"; // <-- add this import
+import { toast } from "react-toastify";
 
 const RatingsAndReviews = ({ userId }: ReviewsSectionProps) => {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -27,7 +28,6 @@ const RatingsAndReviews = ({ userId }: ReviewsSectionProps) => {
       setError(null);
 
       const responseData = await fetchFreelancerReviews(userId);
-
       const reviewsArray: Review[] = Array.isArray(responseData?.data) ? responseData.data : [];
 
       const reviewsWithIds = reviewsArray.map((review, index) => ({
@@ -50,7 +50,6 @@ const RatingsAndReviews = ({ userId }: ReviewsSectionProps) => {
       console.error("Error loading reviews:", error);
 
       if (error.response?.status === 404) {
-        // setError("Freelancer profile not found");
         toast.error("Freelancer profile not found");
       } else if (error.response?.status >= 500) {
         setError("Server error. Please try again later.");
@@ -68,7 +67,6 @@ const RatingsAndReviews = ({ userId }: ReviewsSectionProps) => {
     }
   };
 
-
   const formatDate = (dateString: string) => {
     try {
       return new Date(dateString).toLocaleDateString('he-IL');
@@ -77,6 +75,15 @@ const RatingsAndReviews = ({ userId }: ReviewsSectionProps) => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8 text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Reviews</h2>
+        <Louder />
+        <p className="text-gray-500 mt-2">Loading reviews...</p>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -188,6 +195,6 @@ const RatingsAndReviews = ({ userId }: ReviewsSectionProps) => {
       )}
     </div>
   );
-}
+};
 
 export default RatingsAndReviews;

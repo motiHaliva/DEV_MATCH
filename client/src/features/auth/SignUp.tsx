@@ -44,7 +44,7 @@ if (!validateSignUpForm(formData, setError)) return;
 
   setIsLoading(true);
   try {
-    const res = await signUpUser(formData);
+     await signUpUser(formData);
     
     toast.success("ההרשמה הצליחה!");
     navigate("/profile");
