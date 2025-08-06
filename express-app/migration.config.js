@@ -1,8 +1,8 @@
-import dotenv from 'dotenv';
-dotenv.config();
+require('dotenv').config();
+const path = require('path');
 
-export default {
+module.exports = {
   databaseUrl: process.env.DATABASE_URL + '?sslmode=require',
   migrationsTable: 'pgmigrations',
-  dir: '/migrations'
+  dir: path.join(__dirname, 'src', 'migrations'),
 };

@@ -1,14 +1,13 @@
 // migrate.js
-import dotenv from 'dotenv';
-dotenv.config();
+require('dotenv').config();
 
-export default {
+module.exports = {
   databaseUrl: {
     connectionString: process.env.DATABASE_URL,
     ssl: {
-      rejectUnauthorized: false, 
+      rejectUnauthorized: false,
     },
   },
   migrationsTable: 'pgmigrations',
-  dir: 'migrations',
+  dir: 'src/migrations', 
 };
