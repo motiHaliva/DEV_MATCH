@@ -1,14 +1,10 @@
 // migration.config.js
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 export default {
   direction: 'up',
-  databaseUrl: {
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
-  },
+  databaseUrl: process.env.DATABASE_URL,
   migrationsTable: 'pgmigrations',
-  dir: 'migrations', 
+  dir: 'migrations',
 };
