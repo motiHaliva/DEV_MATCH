@@ -14,12 +14,10 @@ import PostCommentRoutes from './routes/PostCommentRoutes.js';
 import PostLikeRoutes from './routes/PostLikeRoutes.js';
 import freelancerReviewsRoutes from './routes/freelancerReviewsRoutes.js';
 import cors from 'cors';
-import pgMigrate from 'node-pg-migrate';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const execAsync = promisify(exec);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,23 +43,19 @@ app.use('/post-comments',AuthMiddleware, PostCommentRoutes);
 app.use('/post-likes',AuthMiddleware, PostLikeRoutes);
 app.use('/freelancer-reviews', AuthMiddleware, freelancerReviewsRoutes);
 
-// פונקציה להריץ מיגרציות
+// פונקציה להריץ מיגרציות באמצעות CLI
 async function runMigrations() {
   try {
     console.log('🔄 Starting database migrations...');
     
-    const migrationsResult = await pgMigrate({
-      databaseUrl: process.env.DATABASE_URL,
-      migrationsTable: 'pgmigrations',
-      dir: join(__dirname, '../migrations'),
-      direction: 'up',
-      verbose: true,
-      ssl: {
-        rejectUnauthorized: false
-      }
-    });
+    const { stdout, stderr } = await execAsync('npx node-pg-migrate up --config migration.config.js');
     
-    console.log('✅ Migrations completed successfully:', migrationsResult);
+    if (stderr) {
+      console.error('Migration warnings:', stderr);
+    }
+    
+    console.log('✅ Migrations completed successfully:');
+    console.log(stdout);
     return true;
   } catch (error) {
     console.error('❌ Migration failed:', error.message);
@@ -70,15 +64,55 @@ async function runMigrations() {
   }
 }
 
+// פונקציה לבדוק אם צריך להריץ מיגרציות
+async function checkMigrationsNeeded() {
+  try {
+    // בדוק אם קיימת טבלת migrations
+    const result = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_name = 'pgmigrations'
+      );
+    `);
+    
+    if (!result.rows[0].exists) {
+      console.log('📋 Migrations table not found - running migrations...');
+      return true;
+    }
+    
+    // בדוק אם יש מיגרציות חדשות
+    const migrationsResult = await pool.query('SELECT COUNT(*) FROM pgmigrations');
+    console.log(`📋 Found ${migrationsResult.rows[0].count} completed migrations`);
+    
+    // תמיד נריץ מיגרציות - node-pg-migrate יבדוק בעצמו אם יש חדשות
+    return true;
+    
+  } catch (error) {
+    console.log('📋 Cannot check migrations status, will attempt to run:', error.message);
+    return true;
+  }
+}
+
 // התחלת השרת עם מיגרציות
 async function startServer() {
   try {
-    // 1. בדוק חיבור לDB ורוץ מיגרציות
+    // 1. בדוק חיבור לDB
     const dbTestResult = await pool.query('SELECT NOW()');
     console.log('✅ Connected to PostgreSQL! Time:', dbTestResult.rows[0].now);
     
-    // 2. הרץ מיגרציות
-    await runMigrations();
+    // הוסף בדיקת מידע על DB
+    const dbInfoResult = await pool.query('SELECT current_database(), current_user');
+    console.log('✅ Connected to DB:');
+    console.log('📦 Database:', dbInfoResult.rows[0].current_database);
+    console.log('👤 User:', dbInfoResult.rows[0].current_user);
+    
+    // 2. בדוק אם צריך מיגרציות והרץ אותן
+    const needsMigrations = await checkMigrationsNeeded();
+    if (needsMigrations) {
+      await runMigrations();
+    } else {
+      console.log('✅ All migrations are up to date');
+    }
     
     // 3. התחל את השרת
     app.listen(PORT, () => {
