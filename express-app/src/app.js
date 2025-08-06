@@ -13,7 +13,13 @@ import PostRoutes from './routes/PostRoutes.js';
 import PostCommentRoutes from './routes/PostCommentRoutes.js';
 import PostLikeRoutes from './routes/PostLikeRoutes.js';
 import freelancerReviewsRoutes from './routes/freelancerReviewsRoutes.js';
-import cors from 'cors'
+import cors from 'cors';
+import { migrate } from 'node-pg-migrate';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,7 +28,6 @@ app.use(cors({
   origin: ['http://localhost:5173', 'https://dev-match-one.vercel.app'],
   credentials: true, 
 }));
-
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -40,16 +45,55 @@ app.use('/post-comments',AuthMiddleware, PostCommentRoutes);
 app.use('/post-likes',AuthMiddleware, PostLikeRoutes);
 app.use('/freelancer-reviews', AuthMiddleware, freelancerReviewsRoutes);
 
-app.listen(PORT, async () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-
+// פונקציה להריץ מיגרציות
+async function runMigrations() {
   try {
-    const res = await pool.query('SELECT NOW()');
-    console.log('✅ Connected to PostgreSQL! Time:', res.rows[0].now);
+    console.log('🔄 Starting database migrations...');
+    
+    const migrationsResult = await migrate({
+      databaseUrl: process.env.DATABASE_URL,
+      migrationsTable: 'pgmigrations',
+      dir: join(__dirname, '../migrations'),
+      direction: 'up',
+      verbose: true,
+      ssl: {
+        rejectUnauthorized: false
+      }
+    });
+    
+    console.log('✅ Migrations completed successfully:', migrationsResult);
+    return true;
+  } catch (error) {
+    console.error('❌ Migration failed:', error.message);
+    console.log('⚠️ Continuing without migrations...');
+    return false;
+  }
+}
+
+// התחלת השרת עם מיגרציות
+async function startServer() {
+  try {
+    // 1. בדוק חיבור לDB ורוץ מיגרציות
+    const dbTestResult = await pool.query('SELECT NOW()');
+    console.log('✅ Connected to PostgreSQL! Time:', dbTestResult.rows[0].now);
+    
+    // 2. הרץ מיגרציות
+    await runMigrations();
+    
+    // 3. התחל את השרת
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    });
+    
   } catch (err) {
     console.error('❌ Failed to connect to PostgreSQL:', err.message);
+    console.log('⚠️ Starting server without database connection...');
+    
+    // התחל את השרת גם אם יש בעיה עם DB
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on http://localhost:${PORT} (DB connection failed)`);
+    });
   }
-});
+}
 
-
-
+startServer();
