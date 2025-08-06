@@ -7,7 +7,7 @@
     "start": "node src/app.js",
     "dev": "nodemon app.js",
  "migrate": "node-pg-migrate up --config migration.config.js",
-    "build": "npm run migrate"
+"build": "npm run migrate-ssl"
   },
   "dependencies": {
     "@faker-js/faker": "^9.8.0",
