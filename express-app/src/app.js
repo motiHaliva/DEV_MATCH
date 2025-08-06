@@ -93,6 +93,8 @@ app.post('/run-migrations', async (req, res) => {
 async function runMigrations() {
   try {
     console.log('🔄 Starting database migrations...');
+    console.log('📂 Current directory:', process.cwd());
+    console.log('📂 Looking for migrations in: src/migrations');
     
     const { stdout, stderr } = await execAsync('npx node-pg-migrate up --config migration.config.js', {
       env: {
@@ -105,7 +107,8 @@ async function runMigrations() {
       console.error('Migration stderr:', stderr);
     }
     
-    console.log('✅ Migrations stdout:', stdout);
+    console.log('✅ Migrations completed successfully:');
+    console.log('stdout:', stdout);
     return true;
     
   } catch (error) {
