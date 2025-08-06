@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon app.js",
-    "migrate": "node-pg-migrate -c ./migrate.js",
+     "migrate": "node-pg-migrate up",
     "build": "npm run migrate"
   },
   "dependencies": {
