@@ -7,7 +7,7 @@ import type { FreelancerFilters, ProjectFilters, PostFilters } from "../../src/a
 
 type Filters = FreelancerFilters | ProjectFilters | PostFilters;
 
-interface FeedProps {
+export type FeedProps = {
   pageType?: "freelancers" | "projects" | "posts";
   onFiltersChange?: (filters: Filters) => void;
 }

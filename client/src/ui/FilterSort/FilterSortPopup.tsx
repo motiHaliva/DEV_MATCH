@@ -237,7 +237,7 @@ export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
 
       {isMobile && isOpen && <MobilePopup />}
 
-      {!isMobile && pageType !== 'posts' && <DesktopSidebar />}
+      {!isMobile  && <DesktopSidebar />}
     </>
   );
 };
