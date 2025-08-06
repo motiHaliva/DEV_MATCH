@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Login from './features/auth/Login'
 import SignUp from './features/auth/SignUp'
-import Home from './features/home/Home'
 import FreelancerProfile from './features/profiles/freelancerProfile/components/FreelancerProfile'
 import ClientProfile from './features/profiles/clientProfile/components/ClientProfile'
 import ProfileRouter from './features/profiles/ProfileRouter'
@@ -19,7 +18,7 @@ const App = () => {
     <Router>
       <>
         <Routes>
-          <Route path='/' element={<Home />} />
+          <Route path='/' element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/freelancers" element={<ListFreelancers />} />
