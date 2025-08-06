@@ -1,7 +1,14 @@
+// migrate.js
+import dotenv from 'dotenv';
+dotenv.config();
+
 export default {
-  migrationFolder: './migrations',
-  direction: 'up',
-  logFileName: 'migration.log',
-  dbClient: 'pg',
-  connectionString: 'postgres://postgres:moti9710!@localhost:5432/devmatch_db',
+  databaseUrl: {
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false, 
+    },
+  },
+  migrationsTable: 'pgmigrations',
+  dir: 'migrations',
 };
