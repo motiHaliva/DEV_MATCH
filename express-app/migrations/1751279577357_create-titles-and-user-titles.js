@@ -4,6 +4,7 @@ export const up = (pgm) => {
     id: { type: 'serial', primaryKey: true },
     name: { type: 'varchar(100)', notNull: true, unique: true },
     created_at: { type: 'timestamp', default: pgm.func('current_timestamp') },
+      deleted_at: { type: 'timestamp', default: null, notNull: false },
   });
 
   pgm.createTable('user_titles', {
