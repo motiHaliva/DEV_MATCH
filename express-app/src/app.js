@@ -14,7 +14,7 @@ import PostCommentRoutes from './routes/PostCommentRoutes.js';
 import PostLikeRoutes from './routes/PostLikeRoutes.js';
 import freelancerReviewsRoutes from './routes/freelancerReviewsRoutes.js';
 import cors from 'cors';
-import { migrate } from 'node-pg-migrate';
+import pgMigrate from 'node-pg-migrate';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -50,7 +50,7 @@ async function runMigrations() {
   try {
     console.log('🔄 Starting database migrations...');
     
-    const migrationsResult = await migrate({
+    const migrationsResult = await pgMigrate({
       databaseUrl: process.env.DATABASE_URL,
       migrationsTable: 'pgmigrations',
       dir: join(__dirname, '../migrations'),
@@ -96,4 +96,5 @@ async function startServer() {
   }
 }
 
+// התחל את השרת
 startServer();
