@@ -11,7 +11,6 @@ const HeaderProfileFreelancer = ({
     setEditMode,
     isOwnProfile,
     hasFreelancerProfile,
-    currentUser,
 }: HeaderProfilePropsFreelance) => {
 
     const navigate = useNavigate();

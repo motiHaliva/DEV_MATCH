@@ -44,4 +44,4 @@ The application will be running on `http://localhost:3000`.
 
 ## Contributing
 
-Feel free to submit issues or pull requests for any improvements or features you would like to see!
+Feel free to submit issues or pull requests for any improvements or featuyou would like to see!

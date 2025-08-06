@@ -1,4 +1,3 @@
-import type { Project } from "../features/profiles/type";
 export type ProjectFormInput = {
   title: string;
   description: string;

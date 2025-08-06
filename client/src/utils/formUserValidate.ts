@@ -1,4 +1,4 @@
-import type { SignUpProps } from "../api/authApi";
+import type { SignUpProps } from "../api/typs";
 
 
 export const validateSignUpForm = (

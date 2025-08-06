@@ -13,7 +13,6 @@ const HeaderProfileProject = ({
   editProfileMode,
   setEditProfileMode,
   isOwnProfile,
-  currentUser,
 }: HeaderProfilePropsProject) => {
   const navigate = useNavigate();
 
