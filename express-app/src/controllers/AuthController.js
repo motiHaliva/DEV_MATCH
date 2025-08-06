@@ -8,19 +8,28 @@ import { sanitizeInput } from '../sanitize/sanitize.js';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export const signUp = async (req, res) => {
-   console.log("Incoming request body to /signup:", req.body);
+  console.log("📥 Incoming request body to /signup:", req.body);
   
   try {
     const sanitizedData = sanitizeInput(req.body);
+    console.log("🧼 Sanitized data:", sanitizedData); // 💡
+
     const { error } = userSchema.validate(sanitizedData);
-    if (error) return res.status(400).json({ error: error.details[0].message });
+    if (error) {
+      console.log("❌ Validation error:", error.details[0].message); // 💡
+      return res.status(400).json({ error: error.details[0].message });
+    }
 
     const existing = await UserModel.findOneBy('email', sanitizedData.email);
+    console.log("🔍 Existing user:", existing); // 💡
+
     if (existing) return res.status(409).json({ error: 'Email already in use' });
 
     const hashedPassword = await bcrypt.hash(sanitizedData.password, 10);
+    console.log("🔑 Hashed password generated"); // 💡
+
     const newUser = await UserModel.create({ ...sanitizedData, password: hashedPassword });
-   
+    console.log("✅ New user created:", newUser); // 💡
 
     const token = jwt.sign(
       { id: newUser.id, role: newUser.role },
@@ -28,20 +37,22 @@ export const signUp = async (req, res) => {
       { expiresIn: '7d' }
     );
 
- res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', 
-    sameSite: 'strict',
-    maxAge: 1000 * 60 * 60 * 24 * 7, 
-  })
-  .status(201)
-  .json({ user: { id: newUser.id, role: newUser.role, email: newUser.email } });
+    res
+      .cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      })
+      .status(201)
+      .json({ user: { id: newUser.id, role: newUser.role, email: newUser.email } });
 
   } catch (err) {
-    console.error(err);
+    console.error("❌ Signup error caught:", err); // 💡
     res.status(500).json({ error: 'Server error' });
   }
 };
+
 
 export const login = async (req, res) => {
   try {
