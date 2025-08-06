@@ -23,6 +23,8 @@ const ProfileRouter = () => {
     );
   }
 
+  console.log(currentUser);
+  
   if (currentUser.role === 'client') {
     return <ClientProfile />;
   } else if (currentUser.role === 'freelancer') {
