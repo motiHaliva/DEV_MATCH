@@ -43,23 +43,75 @@ app.use('/post-comments',AuthMiddleware, PostCommentRoutes);
 app.use('/post-likes',AuthMiddleware, PostLikeRoutes);
 app.use('/freelancer-reviews', AuthMiddleware, freelancerReviewsRoutes);
 
-// פונקציה להריץ מיגרציות באמצעות CLI
+// Routes לבדיקת מצב ומיגרציות
+app.get('/health', async (req, res) => {
+  try {
+    const dbTest = await pool.query('SELECT NOW()');
+    const tablesCheck = await pool.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+      ORDER BY table_name
+    `);
+    
+    res.json({
+      status: 'OK',
+      database: 'Connected',
+      timestamp: dbTest.rows[0].now,
+      tables: tablesCheck.rows.map(row => row.table_name),
+      tablesCount: tablesCheck.rows.length
+    });
+  } catch (error) {
+    res.json({
+      status: 'ERROR',
+      database: 'Disconnected',
+      error: error.message
+    });
+  }
+});
+
+// Route להרצת מיגרציות ידנית
+app.post('/run-migrations', async (req, res) => {
+  try {
+    console.log('🔄 Manual migration requested...');
+    const result = await runMigrations();
+    
+    res.json({
+      success: result,
+      message: result ? 'Migrations completed successfully' : 'Migrations failed'
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: 'Migration error',
+      error: error.message
+    });
+  }
+});
+
+// פונקציה להריץ מיגרציות עם SSL נכון
 async function runMigrations() {
   try {
     console.log('🔄 Starting database migrations...');
     
-    const { stdout, stderr } = await execAsync('npx node-pg-migrate up --config migration.config.js');
+    const { stdout, stderr } = await execAsync('npx node-pg-migrate up --config migration.config.js', {
+      env: {
+        ...process.env,
+        PGSSLMODE: 'require'
+      }
+    });
     
-    if (stderr) {
-      console.error('Migration warnings:', stderr);
+    if (stderr && !stderr.includes('No migrations to run')) {
+      console.error('Migration stderr:', stderr);
     }
     
-    console.log('✅ Migrations completed successfully:');
-    console.log(stdout);
+    console.log('✅ Migrations stdout:', stdout);
     return true;
+    
   } catch (error) {
     console.error('❌ Migration failed:', error.message);
-    console.log('⚠️ Continuing without migrations...');
+    if (error.stdout) console.log('stdout:', error.stdout);
+    if (error.stderr) console.log('stderr:', error.stderr);
     return false;
   }
 }
@@ -109,7 +161,11 @@ async function startServer() {
     // 2. בדוק אם צריך מיגרציות והרץ אותן
     const needsMigrations = await checkMigrationsNeeded();
     if (needsMigrations) {
-      await runMigrations();
+      const migrationSuccess = await runMigrations();
+      if (!migrationSuccess) {
+        console.log('⚠️ Migrations failed - please check migration files and database configuration');
+        console.log('🔍 Check: https://dev-match-h981.onrender.com/health for database status');
+      }
     } else {
       console.log('✅ All migrations are up to date');
     }
