@@ -9,5 +9,5 @@ module.exports = {
     },
   },
   migrationsTable: 'pgmigrations',
-  dir: 'src/migrations', 
+  dir: 'migrations', 
 };
