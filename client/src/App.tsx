@@ -12,7 +12,7 @@ import { AuthProvider } from './features/auth/AuthContext'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export const BASE_URL = "http://localhost:4000";
+// export const BASE_URL = "http://localhost:4000";
 
 const App = () => {
   return (

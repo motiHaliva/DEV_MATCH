@@ -1,11 +1,12 @@
+
 import { useAuth } from '../auth/AuthContext';
 import FreelancerProfile from './freelancerProfile/components/FreelancerProfile';
 import ClientProfile from './clientProfile/components/ClientProfile';
+console.log("ProfileRouter mounted!");
 
 const ProfileRouter = () => {
   const { currentUser, loading } = useAuth();
   
-  console.log("ProfileRouter - Loading:", loading);
   console.log("ProfileRouter - CurrentUser:", currentUser);
   console.log("ProfileRouter - User role:", currentUser?.role);
  
