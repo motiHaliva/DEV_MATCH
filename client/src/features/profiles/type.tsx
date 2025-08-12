@@ -48,7 +48,7 @@ export type HeaderProfilePropsFreelance = {
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>
     isOwnProfile: boolean | null;
     hasFreelancerProfile: boolean;
-    currentUser: CurrentUser;
+    currentUser: CurrentUser | null;
 }
 export type Title = { id: number; name: string };
 export type Skill = { id: number; name: string };
@@ -76,7 +76,7 @@ export type ProfileContentProps ={
   hasFreelancerProfile: boolean;
   setHasFreelancerProfile: React.Dispatch<React.SetStateAction<boolean>>;
   isOwnProfile: boolean|null;
-  currentUser: CurrentUser;
+  currentUser: CurrentUser|null;
   editMode:boolean;
   setEditMode:React.Dispatch<React.SetStateAction<boolean>>
 
@@ -105,7 +105,7 @@ export type ViewProfileProps = {
 }
 
 export type PostsSectionProps = {
-  currentUser: CurrentUser;
+  currentUser: CurrentUser | null;
   userId?: string;
   isOwnProfile: boolean|null;
 }
@@ -124,7 +124,7 @@ export type HeaderProfilePropsProject = {
   editProfileMode: boolean;
   setEditProfileMode: React.Dispatch<React.SetStateAction<boolean>>;
   isOwnProfile: boolean;
-  currentUser: CurrentUser;
+  currentUser: CurrentUser | null;
 };
 
 export type EditProfilePropsProject= {
@@ -142,13 +142,13 @@ export type EditProfilePropsProject= {
     editProfileMode: boolean;
     setEditProfileMode: React.Dispatch<React.SetStateAction<boolean>>;
     isOwnProfile: boolean;
-    currentUser: CurrentUser;
+    currentUser: CurrentUser|null;
     onProjectAdded: () => Promise<void>;
     onProjectDelete?: (projectId: number) => Promise<void>;
     onProjectUpdate?: (projectId: number, updatedData: Partial<Project>) => Promise<void>;
   }
   export type ClientPostsSectionProps= {
-    currentUser: CurrentUser ;
+    currentUser: CurrentUser | null;
     clientId?: string;
     isOwnProfile: boolean;
   }
@@ -158,7 +158,7 @@ export type EditProfilePropsProject= {
 }
 
 export type  UseUserPostsParams = {
-  currentUser: CurrentUser ;
+  currentUser: CurrentUser | null;
   userId?: string;
   isOwnProfile: boolean|null;
 }
