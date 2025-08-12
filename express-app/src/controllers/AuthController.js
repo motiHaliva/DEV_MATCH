@@ -37,17 +37,13 @@ export const signUp = async (req, res) => {
       { expiresIn: '7d' }
     );
 
-const isProduction = process.env.NODE_ENV === 'production';
-const isSecure = isProduction && req.secure; 
-// req.secure אומר אם הבקשה הגיעה ב-HTTPS (באקספרס עם trust proxy מופעל)
-
-res.cookie('token', token, {
-  httpOnly: true,
-  secure: isSecure, 
-  sameSite: isSecure ? 'none' : 'lax', 
-  maxAge: 1000 * 60 * 60 * 24 * 7,
-})
-
+    res
+      .cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      })
       .status(201)
       .json({ user: { id: newUser.id, role: newUser.role, email: newUser.email } });
 
