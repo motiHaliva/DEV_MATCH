@@ -42,7 +42,7 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     if (currentUser) {
       setFormData(prev => ({
         ...prev,
-        post_type: currentUser.role
+      post_type: currentUser?.role ?? "",
       }));
     }
   }, [currentUser]);
