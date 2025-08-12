@@ -151,11 +151,10 @@ async function checkMigrationsNeeded() {
 // התחלת השרת עם מיגרציות
 async function startServer() {
   try {
-    // 1. בדוק חיבור לDB
+
     const dbTestResult = await pool.query('SELECT NOW()');
     console.log('✅ Connected to PostgreSQL! Time:', dbTestResult.rows[0].now);
     
-    // הוסף בדיקת מידע על DB
     const dbInfoResult = await pool.query('SELECT current_database(), current_user');
     console.log('✅ Connected to DB:');
     console.log('📦 Database:', dbInfoResult.rows[0].current_database);
