@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export const signUp = async (req, res) => {
   console.log("📥 Incoming request body to /signup:", req.body);
-  
+
   try {
     const sanitizedData = sanitizeInput(req.body);
     console.log("🧼 Sanitized data:", sanitizedData); // 💡
@@ -41,7 +41,7 @@ export const signUp = async (req, res) => {
       .cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 1000 * 60 * 60 * 24 * 7,
       })
       .status(201)
@@ -60,11 +60,11 @@ export const login = async (req, res) => {
     if (!email || !password) return res.status(400).json({ error: 'Missing email or password' });
 
     const user = await UserModel.findOneBy('email', email);
-    if (!user)return res.status(401).json({ message: "Email or password is incorrect" });
+    if (!user) return res.status(401).json({ message: "Email or password is incorrect" });
 
 
     const isMatch = await bcrypt.compare(password, user.password);
-    
+
     if (!isMatch) return res.status(401).json({ message: "Email or password is incorrect" });
 
 
@@ -74,19 +74,18 @@ export const login = async (req, res) => {
       JWT_SECRET,
       { expiresIn: '7d' }
     );
-  
-     res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', 
-    samesite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 * 7, 
-  })
-  .json({ user: { id: user.id, role: user.role, email: user.email } });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    }).json({ user: { id: user.id, role: user.role, email: user.email } });
 
   } catch (err) {
     console.error(err);
     console.log(err);
-    
+
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -99,7 +98,7 @@ export const logout = (req, res) => {
   });
   res.json({ message: 'Logged out' });
 };
-// ב־AuthController שלך
+
 export const getCurrentUser = async (req, res) => {
   try {
     const userId = req.user.id;
