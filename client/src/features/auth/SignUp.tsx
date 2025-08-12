@@ -7,19 +7,19 @@ import { FaEnvelope, FaLock } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { signUpUser } from "../../api/authApi"
 import { validateSignUpForm } from "../../utils/formUserValidate";
-
+import { useAuth } from "../auth/AuthContext"; // הוסף את זה!
 
 type SignUpProps = {
   firstname: string;
   lastname: string;
   email: string;
   password: string;
-  role: "freelancer" | "client" | "admin";
+  role: "freelancer" | "client" | "admin" | null;
 };
-
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { setCurrentUser } = useAuth(); // הוסף את זה!
 
   const [formData, setFormData] = useState<SignUpProps>({
     firstname: "",
@@ -37,25 +37,30 @@ const SignUp = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
+    e.preventDefault();
+    setError("");
 
-if (!validateSignUpForm(formData, setError)) return;
+    if (!validateSignUpForm(formData, setError)) return;
 
-  setIsLoading(true);
-  try {
-     await signUpUser(formData);
-    
-    toast.success("ההרשמה הצליחה!");
-    navigate("/profile");
-  } catch (err: any) {
-    const errorMessage = err.response?.data?.error ;
-    setError(errorMessage);
-    toast.error(errorMessage);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    setIsLoading(true);
+    try {
+      const response = await signUpUser(formData);
+      
+      console.log("✅ SignUp successful, user data:", response.data.user);
+
+      setCurrentUser(response.data.user);
+      
+      toast.success("ההרשמה הצליחה!");
+      navigate("/profile");
+      
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error;
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center">
@@ -115,7 +120,7 @@ if (!validateSignUpForm(formData, setError)) return;
           <select
             id="role"
             name="role"
-            value={formData.role}
+            value={formData.role || ""}
             onChange={handleChange}
             className="w-full border rounded p-2 border-gray-400"
             required

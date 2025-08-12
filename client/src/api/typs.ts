@@ -7,7 +7,7 @@ import type {  Review } from "../features/profiles/type";
 
 export type CurrentUser = {
   id: number;
-  role: "freelancer" | "client" | "admin";
+  role: "freelancer" | "client" | "admin"| null;
   firstname: string;
   lastname: string;
   email: string;
@@ -20,7 +20,7 @@ export type SignUpProps = {
   lastname: string;
   email: string;
   password: string;
-  role: "freelancer" | "client" | "admin";
+  role: "freelancer" | "client" | "admin"|null;
 };
 
 

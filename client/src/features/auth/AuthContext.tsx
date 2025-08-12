@@ -3,37 +3,29 @@ import { getCurrentUser } from "../../api/userApi"
 import type { CurrentUser } from "../../api/typs"
 
 type AuthContextType = {
-  currentUser: CurrentUser | null; // שינוי: יכול להיות null
-  setCurrentUser: (user: CurrentUser | null) => void;
+  currentUser: CurrentUser;
+  setCurrentUser: (user: CurrentUser) => void;
   loading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// const emptyCurrent: CurrentUser = {
-//   id: 0,
-//   role: "client", 
-//   firstname: "",
-//   lastname: "",
-//   email: "",
-//   created_at: "",
-//   profile_image: "",
-// };
-
+const emptyCurrent: CurrentUser = {
+  id: 0,
+  role: "client", 
+  firstname: "",
+  lastname: "",
+  email: "",
+  created_at: "",
+  profile_image: "",
+};
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null); // התחל עם null
+  const [currentUser, setCurrentUser] = useState<CurrentUser>(emptyCurrent);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getCurrentUser()
-      .then(user => {
-        console.log("User loaded from API:", user); // דיבאג
-        setCurrentUser(user);
-      })
-      .catch((error) => {
-        console.log("Failed to get user:", error); // דיבאג
-        setCurrentUser(null); // null במקום emptyCurrent
-      })
+      .then(user => setCurrentUser(user))
+      .catch(() => setCurrentUser(emptyCurrent))
       .finally(() => setLoading(false));
   }, []);
 

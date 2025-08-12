@@ -22,7 +22,7 @@ export const validateSignUpForm = (
     return false;
   }
 
-  if (!["freelancer", "client", "admin"].includes(role)) {
+  if (role === null || !["freelancer", "client", "admin"].includes(role)) {
     setError("Role must be one of: freelancer, client, admin");
     return false;
   }

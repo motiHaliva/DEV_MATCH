@@ -2,14 +2,20 @@
 import { useAuth } from '../auth/AuthContext';
 import FreelancerProfile from './freelancerProfile/components/FreelancerProfile';
 import ClientProfile from './clientProfile/components/ClientProfile';
+import { useEffect } from 'react';
 
 const ProfileRouter = () => {
   const { currentUser, loading } = useAuth();
+
+  useEffect(()=>{
+    console.log(currentUser);
+    
+  },[currentUser]);
   
   console.log("ProfileRouter - CurrentUser:", currentUser);
   console.log("ProfileRouter - User role:", currentUser?.role);
  
-  if (loading) {
+  if (loading || !currentUser) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-lg">Loading profile...</div>
