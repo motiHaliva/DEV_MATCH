@@ -4,9 +4,11 @@ import ClientProfile from './clientProfile/components/ClientProfile';
 
 const ProfileRouter = () => {
   const { currentUser, loading } = useAuth();
-  console.log(currentUser.role);
   
-
+  console.log("ProfileRouter - Loading:", loading);
+  console.log("ProfileRouter - CurrentUser:", currentUser);
+  console.log("ProfileRouter - User role:", currentUser?.role);
+ 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -23,16 +25,18 @@ const ProfileRouter = () => {
     );
   }
 
-  console.log(currentUser);
-  
+  // בדיקה מפורטת יותר של הרול
   if (currentUser.role === 'client') {
+    console.log("Routing to ClientProfile");
     return <ClientProfile />;
   } else if (currentUser.role === 'freelancer') {
+    console.log("Routing to FreelancerProfile");
     return <FreelancerProfile />;
   } else {
+    console.error("Unknown role:", currentUser.role);
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-lg text-red-600">Unknown user role</div>
+        <div className="text-lg text-red-600">Unknown user role: {currentUser.role}</div>
       </div>
     );
   }

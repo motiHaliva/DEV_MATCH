@@ -8,6 +8,7 @@ import ListProjects from './features/projects/ListProjects'
 import ListFreelancers from './features/freelancers/ListFreelancers'
 import ListPosts from './features/posts/ListPosts'
 import CreatePost from './features/posts/CreatePost'
+import { AuthProvider } from './features/auth/AuthContext' 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -16,7 +17,7 @@ export const BASE_URL = "http://localhost:4000";
 const App = () => {
   return (
     <Router>
-      <>
+      <AuthProvider> 
         <Routes>
           <Route path='/' element={<SignUp />} />
           <Route path="/login" element={<Login />} />
@@ -41,7 +42,7 @@ const App = () => {
           pauseOnHover
           theme="light"
         />
-      </>
+      </AuthProvider>
     </Router>
   )
 }
