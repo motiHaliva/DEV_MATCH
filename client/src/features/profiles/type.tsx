@@ -142,7 +142,7 @@ export type EditProfilePropsProject= {
     editProfileMode: boolean;
     setEditProfileMode: React.Dispatch<React.SetStateAction<boolean>>;
     isOwnProfile: boolean;
-    currentUser: CurrentUser|null;
+    currentUser: CurrentUser;
     onProjectAdded: () => Promise<void>;
     onProjectDelete?: (projectId: number) => Promise<void>;
     onProjectUpdate?: (projectId: number, updatedData: Partial<Project>) => Promise<void>;

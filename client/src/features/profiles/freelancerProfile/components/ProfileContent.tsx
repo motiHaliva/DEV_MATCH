@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import EditProfile from "./EditProfile";
 import ViewProfile from "./ViweProfile";
-import HeaderProfile from "./HeaderProfileFreelancer";
 import { saveFreelancerProfile ,fetchAllSkillsAndTitles } from '../../../../api/freelancersApi'
 import type { ProfileContentProps ,Skill,Title } from "../../type";
+import HeaderProfileFreelancer from "./HeaderProfileFreelancer";
 
 
 
@@ -84,7 +84,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   return (
     <>
-      <HeaderProfile
+      <HeaderProfileFreelancer
         profile={profile}
         setProfile={setProfile}
         editMode={editMode}

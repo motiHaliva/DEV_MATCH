@@ -26,7 +26,7 @@ export type CommentsSectionProps= {
 }
 
 export type FormCommentsProps = {
-    currentUser?: CurrentUser|null;
+    currentUser?: CurrentUser;
     newComment: string;
     setNewComment: (value: string) => void;
     submitting: boolean;

@@ -64,24 +64,26 @@ const FreelancerProfile = () => {
       <div className="flex flex-col gap-7 justify-center">
      
 
-        {!loading && (
-          <>
-            <ProfileContent
-              profile={profile}
-              setProfile={setProfile}
-              myTitles={myTitles}
-              mySkills={mySkills}
-              setMyTitles={setMyTitles}
-              setMySkills={setMySkills}
-              hasFreelancerProfile={hasFreelancerProfile}
-              setHasFreelancerProfile={setHasFreelancerProfile}
-              isOwnProfile={isOwnProfile}
-              currentUser={currentUser}
-               editMode={editMode}
-               setEditMode={setEditMode}   
-            />
+  {!loading && currentUser && (
+  <>
+    <ProfileContent
+      profile={profile}
+      setProfile={setProfile}
+      myTitles={myTitles}
+      mySkills={mySkills}
+      setMyTitles={setMyTitles}
+      setMySkills={setMySkills}
+      hasFreelancerProfile={hasFreelancerProfile}
+      setHasFreelancerProfile={setHasFreelancerProfile}
+      isOwnProfile={isOwnProfile}
+      currentUser={currentUser}
+      editMode={editMode}
+      setEditMode={setEditMode}
+    />
+  
+
         
-   {!editMode && (                    // <-- תנאי להצגת פוסטים
+   {!editMode && (                   
               <PostsSection
                 currentUser={currentUser}
                 userId={userId}
