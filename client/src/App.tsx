@@ -25,7 +25,10 @@ const App = () => {
           <Route path="/freelancers" element={<ListFreelancers />} />
           <Route path="/projects" element={<ListProjects />} />
           <Route path="/posts" element={<ListPosts />} />
-          <Route path='/profile' element={<ProfileRouter />} />
+         <>
+        {console.log("Route: /profile - rendering ProfileRouter")}
+        <ProfileRouter />
+      </>
           <Route path="/freelancerProfile/:userId" element={<FreelancerProfile />} />
           <Route path="/clientProfile/:clientId" element={<ClientProfile />} />
           <Route path="/createPost" element={<CreatePost />} />
