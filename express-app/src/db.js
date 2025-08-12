@@ -8,11 +8,10 @@ const { Pool } = pg;
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false, // נדרש לחיבור ל-Render
+    rejectUnauthorized: false, 
   },
 });
 
-// ✅ בדיקה בלוגים אם התחברנו למסד והמשתנים מוגדרים נכון
 (async () => {
   try {
     const result = await pool.query('SELECT current_database(), current_user');
