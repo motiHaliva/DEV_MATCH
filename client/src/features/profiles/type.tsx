@@ -48,7 +48,7 @@ export type HeaderProfilePropsFreelance = {
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>
     isOwnProfile: boolean | null;
     hasFreelancerProfile: boolean;
-    currentUser: CurrentUser | null;
+    currentUser: CurrentUser;
 }
 export type Title = { id: number; name: string };
 export type Skill = { id: number; name: string };
@@ -105,7 +105,7 @@ export type ViewProfileProps = {
 }
 
 export type PostsSectionProps = {
-  currentUser: CurrentUser | null;
+  currentUser: CurrentUser;
   userId?: string;
   isOwnProfile: boolean|null;
 }
@@ -124,7 +124,7 @@ export type HeaderProfilePropsProject = {
   editProfileMode: boolean;
   setEditProfileMode: React.Dispatch<React.SetStateAction<boolean>>;
   isOwnProfile: boolean;
-  currentUser: CurrentUser | null;
+  currentUser: CurrentUser;
 };
 
 export type EditProfilePropsProject= {
@@ -148,7 +148,7 @@ export type EditProfilePropsProject= {
     onProjectUpdate?: (projectId: number, updatedData: Partial<Project>) => Promise<void>;
   }
   export type ClientPostsSectionProps= {
-    currentUser: CurrentUser | null;
+    currentUser: CurrentUser ;
     clientId?: string;
     isOwnProfile: boolean;
   }
@@ -158,7 +158,7 @@ export type EditProfilePropsProject= {
 }
 
 export type  UseUserPostsParams = {
-  currentUser: CurrentUser | null;
+  currentUser: CurrentUser ;
   userId?: string;
   isOwnProfile: boolean|null;
 }
