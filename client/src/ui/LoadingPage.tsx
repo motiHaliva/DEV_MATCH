@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../images/logo2.png";
+import { getStats } from "../api/stateApi";
 
 interface Stats {
   users: number;
@@ -8,17 +9,7 @@ interface Stats {
   projects: number;
 }
 
-// Mock API function - replace with your actual API call
-const getStats = async (): Promise<Stats> => {
-  try {
-    const response = await fetch('/stats');
-    if (!response.ok) throw new Error('Failed to fetch stats');
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return { users: 0, freelancers: 0, projects: 0 };
-  }
-};
+
 
 const useCounter = (end: number, duration = 2000, delay = 0) => {
   const [count, setCount] = useState(0);
