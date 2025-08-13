@@ -66,7 +66,7 @@ const SignUp = () => {
     <div className="flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="w-3/4 text-center mt-9 p-5 shadow-xl md:w-1/2"
+        className="w-3/4 text-center mt-9 p-1 shadow-xl md:w-1/2"
       >
         <img className="w-24 rounded-full mx-auto" src={logo} alt="logo" />
         <h1 className="text-2xl font-bold py-6">Create your account</h1>
