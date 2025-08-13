@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState  } from "react";
 import { getStats } from "../api/stateApi";
+import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
   const [stats, setStats] = useState({ users: 0, freelancers: 0, projects: 0 });
+  const navigate = useNavigate();
+
   
 useEffect(() => {
   getStats()
@@ -10,9 +13,7 @@ useEffect(() => {
     .catch(err => console.error(err));
 }, []);
 
-  const handleNavigation = (path:string) => {
-    window.location.href = path;
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-300 to-blue-600 text-white flex flex-col items-center justify-center p-6" dir="rtl">
@@ -47,13 +48,13 @@ useEffect(() => {
       {/* Call to Action */}
       <div className="flex flex-col sm:flex-row gap-4">
         <button 
-          onClick={() => handleNavigation('/signup')}
+          onClick={() => navigate('/signup')}
           className="px-8 py-3 bg-white text-blue-600 font-semibold text-lg rounded-full shadow-lg hover:bg-gray-100 transition"
         >
           הצטרף עכשיו
         </button>
         <button 
-          onClick={() => handleNavigation('/login')}
+          onClick={() => navigate('/login')}
           className="px-8 py-3 bg-transparent border-2 border-white text-white font-semibold text-lg rounded-full hover:bg-white hover:text-blue-600 transition"
         >
           כניסה
