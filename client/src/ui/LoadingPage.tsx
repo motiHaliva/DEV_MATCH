@@ -145,9 +145,9 @@ export default function LandingPage() {
                             />
                             <Button
                                 text="Sign In"
-                                variant="text"
+                                variant="blue"
                                 onClick={() => navigate("/login")}
-                                className=" text-lg border border-gray-300 rounded-sm"
+                                className=""
                             />
                         </div>
                     </div>
@@ -155,7 +155,7 @@ export default function LandingPage() {
             </div>
 
             {/* Features Section */}
-            <div className="bg-gray-50 py-20">
+            <div className="bg-gray-50 pb-10">
                 <div className="max-w-7xl mx-auto px-6">
                     <h2 className="text-5xl font-bold text-center mb-16 text-blue-900">
                         Why Choose <span className="">DevMatch</span>?
