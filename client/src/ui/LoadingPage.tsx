@@ -107,7 +107,7 @@ export default function LandingPage() {
                     <div className="text-center text-blue-900">
                         <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
                             Welcome to{" "}
-                            <span className="bg-gradient-to-r from-brand-gradientStart to-brand-gradientEnd">
+                            <span className="text-gradient-to-r from-brand-gradientStart to-brand-gradientEnd">
                                 DevMatch
                             </span>
                         </h1>
@@ -135,7 +135,7 @@ export default function LandingPage() {
                             </div>
                         )}
 
-                        {/* CTA Buttons */}
+                      
                         <div className="flex flex-col items-center sm:flex-row gap-6 justify-center mb-20">
                             <Button
                                 text="Join Now"
@@ -146,6 +146,7 @@ export default function LandingPage() {
                                 text="Sign In"
                                 variant="text"
                                 onClick={() => navigate("/login")}
+                                className="border border-gray-100 rounded-sm"
                             />
                         </div>
                     </div>
