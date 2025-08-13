@@ -63,7 +63,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex items-center justify-center w-screen">
+    <div className="">
       <form
         onSubmit={handleSubmit}
         className=" text-center mt-9 p-5 shadow-xl md:w-1/2"
