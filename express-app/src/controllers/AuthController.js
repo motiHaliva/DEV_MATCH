@@ -6,13 +6,12 @@ import { sanitizeInput } from '../sanitize/sanitize.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-// הגדרות cookie אחידות
 const getCookieOptions = () => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  maxAge: 1000 * 60 * 60 * 24 * 7, // 7 ימים
-  path: '/' // חשוב להוסיף
+  maxAge: 1000 * 60 * 60 * 24 * 7, 
+  path: '/'
 });
 
 export const signUp = async (req, res) => {

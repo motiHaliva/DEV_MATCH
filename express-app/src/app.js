@@ -43,7 +43,7 @@ app.use('/post-comments',AuthMiddleware, PostCommentRoutes);
 app.use('/post-likes',AuthMiddleware, PostLikeRoutes);
 app.use('/freelancer-reviews', AuthMiddleware, freelancerReviewsRoutes);
 
-// Routes לבדיקת מצב ומיגרציות
+
 app.get('/health', async (req, res) => {
   try {
     const dbTest = await pool.query('SELECT NOW()');
