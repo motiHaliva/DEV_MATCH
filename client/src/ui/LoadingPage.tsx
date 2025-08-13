@@ -1,27 +1,20 @@
 import { useEffect, useState } from "react";
-import { getStats } from "../api/stateApi";
 import { useNavigate } from "react-router-dom";
-import logo from "../images/logo2.png";
+import logo from "../images/logo2.png"; 
+import { getStats } from "../api/stateApi";
 
-// טיפוסים לסטטיסטיקות
-interface Stats {
+type Stats = {
   users: number;
   freelancers: number;
   projects: number;
-}
+};
 
-// hook לספירה
-const useCounter = (
-  end: number,
-  duration: number = 2000,
-  delay: number = 0
-) => {
-  const [count, setCount] = useState<number>(0);
-  const [isVisible, setIsVisible] = useState<boolean>(false);
+const useCounter = (end: number, duration = 2000, delay = 0) => {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (!isVisible) return;
-
     const timer = setTimeout(() => {
       let startTimestamp: number | null = null;
       const step = (timestamp: number) => {
@@ -34,14 +27,12 @@ const useCounter = (
       };
       window.requestAnimationFrame(step);
     }, delay);
-
     return () => clearTimeout(timer);
   }, [end, duration, delay, isVisible]);
 
   return { count, setIsVisible };
 };
 
-// פרופס לקומפוננטת כרטיס סטטיסטיקה
 interface StatCardProps {
   value: number;
   label: string;
@@ -49,7 +40,7 @@ interface StatCardProps {
 }
 
 const StatCard: React.FC<StatCardProps> = ({ value, label, delay }) => {
-  const { count, setIsVisible } = useCounter(value || 0, 2000, delay);
+  const { count, setIsVisible } = useCounter(value, 2000, delay);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 500);
@@ -66,29 +57,29 @@ const StatCard: React.FC<StatCardProps> = ({ value, label, delay }) => {
 
 export default function LandingPage() {
   const [stats, setStats] = useState<Stats>({ users: 0, freelancers: 0, projects: 0 });
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     getStats()
-      .then((data: Stats) => {
+      .then((data) => {
         setStats(data);
         setLoading(false);
       })
-      .catch((err: unknown) => {
+      .catch((err) => {
         console.error(err);
         setLoading(false);
       });
   }, []);
 
-  const features: { title: string; description: string }[] = [
+  const features = [
     { title: "Connect with Top Talent", description: "Access thousands of skilled freelancers across all development fields" },
     { title: "Diverse Projects", description: "From simple websites to complex enterprise applications" },
     { title: "Secure Platform", description: "Protected payments and quality assurance for every project" }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-indigo-800">
+    <div className="min-h-screen bg-gradient-to-br from-blue-800 via-blue-600 to-indigo-700">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-10"></div>
@@ -96,7 +87,7 @@ export default function LandingPage() {
           {/* Logo */}
           <div className="flex justify-center mb-12">
             <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-6 border border-white border-opacity-20">
-              <img src={logo} alt="DevMatch Logo" className="h-12 w-auto" />
+              <img src={logo} alt="Logo" className="h-16 w-auto" />
             </div>
           </div>
 
@@ -110,7 +101,6 @@ export default function LandingPage() {
             </h1>
             <p className="text-xl md:text-2xl mb-16 max-w-4xl mx-auto leading-relaxed opacity-90">
               The leading platform connecting clients with talented freelancers
-              <br />for amazing development projects
             </p>
 
             {/* Stats */}
@@ -125,7 +115,10 @@ export default function LandingPage() {
             {loading && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 max-w-4xl mx-auto">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="bg-white bg-opacity-20 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white border-opacity-30 animate-pulse">
+                  <div
+                    key={i}
+                    className="bg-white bg-opacity-20 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white border-opacity-30 animate-pulse"
+                  >
                     <div className="h-12 bg-white bg-opacity-30 rounded mb-2"></div>
                     <div className="h-6 bg-white bg-opacity-20 rounded"></div>
                   </div>
@@ -136,13 +129,13 @@ export default function LandingPage() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20">
               <button
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate("/signup")}
                 className="group bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white px-12 py-4 rounded-full text-xl font-semibold shadow-2xl hover:shadow-yellow-500/25 transition-all duration-300 transform hover:scale-105"
               >
                 Join Now
               </button>
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 className="bg-transparent border-2 border-white hover:bg-white hover:text-blue-900 text-white px-12 py-4 rounded-full text-xl font-semibold transition-all duration-300 backdrop-blur-sm"
               >
                 Sign In
@@ -160,7 +153,10 @@ export default function LandingPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="text-center p-8 rounded-2xl bg-white bg-opacity-10 backdrop-blur-md border border-white border-opacity-20 hover:bg-opacity-15 transition-all duration-300 transform hover:scale-105">
+              <div
+                key={index}
+                className="text-center p-8 rounded-2xl bg-white bg-opacity-10 backdrop-blur-md border border-white border-opacity-20 hover:bg-opacity-15 transition-all duration-300 transform hover:scale-105"
+              >
                 <h3 className="text-2xl font-bold mb-4 text-white">{feature.title}</h3>
                 <p className="text-lg text-blue-100 leading-relaxed">{feature.description}</p>
               </div>
@@ -173,13 +169,13 @@ export default function LandingPage() {
       <footer className="bg-blue-900 bg-opacity-50 backdrop-blur-sm py-12 border-t border-white border-opacity-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="flex justify-center mb-6">
-            <img src={logo} alt="DevMatch Logo" className="h-8 w-auto opacity-80" />
+            <img src={logo} alt="Logo" className="h-8 w-auto opacity-80" />
           </div>
           <p className="text-lg text-blue-100 mb-4">
             The leading platform for connecting clients and freelancers
           </p>
           <div className="text-sm text-blue-200 opacity-70">
-            © 2024 DevMatch. All rights reserved.
+            © {new Date().getFullYear()} DevMatch. All rights reserved.
           </div>
         </div>
       </footer>
