@@ -147,7 +147,7 @@ export default function LandingPage() {
                                 text="Sign In"
                                 variant="text"
                                 onClick={() => navigate("/login")}
-                                className="border border-gray-100 rounded-sm"
+                                className=" text-lg border border-gray-300 rounded-sm"
                             />
                         </div>
                     </div>
