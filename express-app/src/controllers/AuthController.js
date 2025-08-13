@@ -9,19 +9,22 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const getCookieOptions = (req) => {
   const isProduction = process.env.NODE_ENV === 'production';
   const userAgent = req?.headers?.['user-agent'] || '';
-  const isIOS = /iP(hone|od|ad)/.test(userAgent);
+  const isIOS = /iP(hone|od|ad)/.test(userAgent) || /Safari/.test(userAgent);
 
   console.log("🍪 User Agent:", userAgent);
   console.log("📱 isIOS:", isIOS, "🌍 isProduction:", isProduction);
 
-  if (!isProduction && isIOS) {
-    console.log("⚠️ Detected iOS in dev mode - adjusting cookie settings");
+  // אם זה iOS או Safari, נסה גישה שונה
+  if (isIOS) {
+    console.log("⚠️ Detected iOS/Safari - adjusting cookie settings");
     return {
       httpOnly: true,
-      secure: false, // כדי שספארי ישמור בפיתוח
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      path: '/'
+      path: '/',
+      // נוסיף domain אם בפרודקשן
+      ...(isProduction && process.env.COOKIE_DOMAIN && { domain: process.env.COOKIE_DOMAIN })
     };
   }
 
@@ -33,7 +36,6 @@ const getCookieOptions = (req) => {
     path: '/'
   };
 };
-
 
 export const signUp = async (req, res) => {
   console.log("📥 Incoming request body to /signup:", req.body);
@@ -65,8 +67,11 @@ export const signUp = async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    const cookieOptions = getCookieOptions(req); // העבר את req!
+    console.log("🍪 Setting cookie with options:", cookieOptions);
+
     res
-      .cookie('token', token, getCookieOptions())
+      .cookie('token', token, cookieOptions)
       .status(201)
       .json({ 
         user: { 
@@ -74,7 +79,12 @@ export const signUp = async (req, res) => {
           role: newUser.role, 
           email: newUser.email 
         },
-        success: true
+        token: token, // שלח גם בגוף התגובה כגיבוי
+        success: true,
+        debug: {
+          userAgent: req.headers['user-agent'],
+          cookieOptions
+        }
       });
 
   } catch (err) {
@@ -106,15 +116,23 @@ export const login = async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    const cookieOptions = getCookieOptions(req); // העבר את req!
+    console.log("🍪 Login - Setting cookie with options:", cookieOptions);
+
     res
-      .cookie('token', token, getCookieOptions())
+      .cookie('token', token, cookieOptions)
       .json({ 
         user: { 
           id: user.id, 
           role: user.role, 
           email: user.email 
         },
-        success: true
+        token: token, // שלח גם בגוף התגובה כגיבוי
+        success: true,
+        debug: {
+          userAgent: req.headers['user-agent'],
+          cookieOptions
+        }
       });
 
   } catch (err) {
@@ -124,8 +142,7 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  // אותן הגדרות כמו בהגדרה, אבל בלי maxAge
-  const cookieOptions = getCookieOptions();
+  const cookieOptions = getCookieOptions(req);
   delete cookieOptions.maxAge;
   
   res.clearCookie('token', cookieOptions);
