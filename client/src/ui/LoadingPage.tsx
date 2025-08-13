@@ -99,7 +99,7 @@ export default function LandingPage() {
                 <div className="relative max-w-7xl mx-auto px-6 py-20">
 
                     <div className="flex justify-center mb-12">
-                        <div className="bg-white p-6 rounded-2xl shadow border border-gray-200">
+                        <div className="bg-white p-2 rounded-2xl shadow border border-gray-200">
                             <img src={logo} alt="DevMatch Logo" className="h-12 w-auto" />
                         </div>
                     </div>
