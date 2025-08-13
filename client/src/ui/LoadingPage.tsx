@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../images/logo2.png"; 
-import { getStats } from "../api/stateApi";
+import logo from "../images/logo2.png";
 
-type Stats = {
+interface Stats {
   users: number;
   freelancers: number;
   projects: number;
+}
+
+// Mock API function - replace with your actual API call
+const getStats = async (): Promise<Stats> => {
+  try {
+    const response = await fetch('/stats');
+    if (!response.ok) throw new Error('Failed to fetch stats');
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return { users: 0, freelancers: 0, projects: 0 };
+  }
 };
 
 const useCounter = (end: number, duration = 2000, delay = 0) => {
@@ -15,6 +26,7 @@ const useCounter = (end: number, duration = 2000, delay = 0) => {
 
   useEffect(() => {
     if (!isVisible) return;
+
     const timer = setTimeout(() => {
       let startTimestamp: number | null = null;
       const step = (timestamp: number) => {
@@ -27,6 +39,7 @@ const useCounter = (end: number, duration = 2000, delay = 0) => {
       };
       window.requestAnimationFrame(step);
     }, delay);
+
     return () => clearTimeout(timer);
   }, [end, duration, delay, isVisible]);
 
@@ -39,8 +52,8 @@ interface StatCardProps {
   delay: number;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ value, label, delay }) => {
-  const { count, setIsVisible } = useCounter(value, 2000, delay);
+const StatCard = ({ value, label, delay }: StatCardProps) => {
+  const { count, setIsVisible } = useCounter(value || 0, 2000, delay);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 500);
@@ -48,9 +61,9 @@ const StatCard: React.FC<StatCardProps> = ({ value, label, delay }) => {
   }, [setIsVisible]);
 
   return (
-    <div className="bg-white bg-opacity-20 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white border-opacity-30 hover:bg-opacity-25 transition-all duration-300 transform hover:scale-105">
-      <p className="text-5xl font-bold mb-2 text-white">{count.toLocaleString()}</p>
-      <p className="text-xl text-blue-100">{label}</p>
+    <div className="bg-white bg-opacity-80 p-8 rounded-2xl shadow-xl border border-gray-200 hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105">
+      <p className="text-5xl font-bold mb-2 text-blue-900">{count.toLocaleString()}</p>
+      <p className="text-xl text-blue-800">{label}</p>
     </div>
   );
 };
@@ -62,45 +75,57 @@ export default function LandingPage() {
 
   useEffect(() => {
     getStats()
-      .then((data) => {
+      .then(data => {
         setStats(data);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         setLoading(false);
       });
   }, []);
 
   const features = [
-    { title: "Connect with Top Talent", description: "Access thousands of skilled freelancers across all development fields" },
-    { title: "Diverse Projects", description: "From simple websites to complex enterprise applications" },
-    { title: "Secure Platform", description: "Protected payments and quality assurance for every project" }
+    {
+      title: "Connect with Top Talent",
+      description: "Access thousands of skilled freelancers across all development fields"
+    },
+    {
+      title: "Diverse Projects",
+      description: "From simple websites to complex enterprise applications"
+    },
+    {
+      title: "Secure Platform",
+      description: "Protected payments and quality assurance for every project"
+    }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-800 via-blue-600 to-indigo-700">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-10"></div>
         <div className="relative max-w-7xl mx-auto px-6 py-20">
+
           {/* Logo */}
           <div className="flex justify-center mb-12">
-            <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-6 border border-white border-opacity-20">
-              <img src={logo} alt="Logo" className="h-16 w-auto" />
+            <div className="bg-white p-6 rounded-2xl shadow border border-gray-200">
+              <img src={logo} alt="DevMatch Logo" className="h-12 w-auto" />
             </div>
           </div>
 
-          {/* Title */}
-          <div className="text-center text-white">
+          {/* Main Content */}
+          <div className="text-center text-blue-900">
             <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
               Welcome to{" "}
               <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
                 DevMatch
               </span>
             </h1>
+
             <p className="text-xl md:text-2xl mb-16 max-w-4xl mx-auto leading-relaxed opacity-90">
               The leading platform connecting clients with talented freelancers
+              <br />
+              for amazing development projects
             </p>
 
             {/* Stats */}
@@ -115,13 +140,7 @@ export default function LandingPage() {
             {loading && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 max-w-4xl mx-auto">
                 {[...Array(3)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="bg-white bg-opacity-20 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white border-opacity-30 animate-pulse"
-                  >
-                    <div className="h-12 bg-white bg-opacity-30 rounded mb-2"></div>
-                    <div className="h-6 bg-white bg-opacity-20 rounded"></div>
-                  </div>
+                  <div key={i} className="bg-gray-200 animate-pulse p-8 rounded-2xl shadow-xl" />
                 ))}
               </div>
             )}
@@ -129,14 +148,14 @@ export default function LandingPage() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20">
               <button
-                onClick={() => navigate("/signup")}
-                className="group bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white px-12 py-4 rounded-full text-xl font-semibold shadow-2xl hover:shadow-yellow-500/25 transition-all duration-300 transform hover:scale-105"
+                onClick={() => navigate('/signup')}
+                className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white px-12 py-4 rounded-full text-xl font-semibold shadow-lg hover:shadow-yellow-500/25 transition-all duration-300 transform hover:scale-105"
               >
                 Join Now
               </button>
               <button
-                onClick={() => navigate("/login")}
-                className="bg-transparent border-2 border-white hover:bg-white hover:text-blue-900 text-white px-12 py-4 rounded-full text-xl font-semibold transition-all duration-300 backdrop-blur-sm"
+                onClick={() => navigate('/login')}
+                className="bg-transparent border-2 border-blue-900 hover:bg-blue-900 hover:text-white text-blue-900 px-12 py-4 rounded-full text-xl font-semibold transition-all duration-300"
               >
                 Sign In
               </button>
@@ -146,19 +165,17 @@ export default function LandingPage() {
       </div>
 
       {/* Features Section */}
-      <div className="bg-white bg-opacity-5 backdrop-blur-sm py-20">
+      <div className="bg-gray-50 py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-5xl font-bold text-center mb-16 text-white">
+          <h2 className="text-5xl font-bold text-center mb-16 text-blue-900">
             Why Choose <span className="text-yellow-400">DevMatch</span>?
           </h2>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div
-                key={index}
-                className="text-center p-8 rounded-2xl bg-white bg-opacity-10 backdrop-blur-md border border-white border-opacity-20 hover:bg-opacity-15 transition-all duration-300 transform hover:scale-105"
-              >
-                <h3 className="text-2xl font-bold mb-4 text-white">{feature.title}</h3>
-                <p className="text-lg text-blue-100 leading-relaxed">{feature.description}</p>
+              <div key={index} className="text-center p-8 rounded-2xl bg-white border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <h3 className="text-2xl font-bold mb-4 text-blue-900">{feature.title}</h3>
+                <p className="text-lg text-blue-700 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -166,16 +183,16 @@ export default function LandingPage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-blue-900 bg-opacity-50 backdrop-blur-sm py-12 border-t border-white border-opacity-20">
+      <footer className="bg-gray-100 py-12 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="flex justify-center mb-6">
-            <img src={logo} alt="Logo" className="h-8 w-auto opacity-80" />
+            <img src={logo} alt="DevMatch Logo" className="h-8 w-auto opacity-80" />
           </div>
-          <p className="text-lg text-blue-100 mb-4">
+          <p className="text-lg text-blue-900 mb-4">
             The leading platform for connecting clients and freelancers
           </p>
-          <div className="text-sm text-blue-200 opacity-70">
-            © {new Date().getFullYear()} DevMatch. All rights reserved.
+          <div className="text-sm text-blue-700 opacity-70">
+            © 2024 DevMatch. All rights reserved.
           </div>
         </div>
       </footer>
