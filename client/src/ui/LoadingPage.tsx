@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../images/logo2.png";
 import { getStats } from "../api/stateApi";
+import Button from "./Button";
 
 interface Stats {
   users: number;
@@ -137,20 +138,18 @@ export default function LandingPage() {
             )}
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20">
-              <button
-                onClick={() => navigate('/signup')}
-                className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white px-12 py-4 rounded-full text-xl font-semibold shadow-lg hover:shadow-yellow-500/25 transition-all duration-300 transform hover:scale-105"
-              >
-                Join Now
-              </button>
-              <button
-                onClick={() => navigate('/login')}
-                className="bg-transparent border-2 border-blue-900 hover:bg-blue-900 hover:text-white text-blue-900 px-12 py-4 rounded-full text-xl font-semibold transition-all duration-300"
-              >
-                Sign In
-              </button>
-            </div>
+         <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20">
+  <Button
+    text="Join Now"
+    variant="blue"
+    onClick={() => navigate("/signup")}
+  />
+  <Button
+    text="Sign In"
+    variant="text"
+    onClick={() => navigate("/login")}
+  />
+</div>
           </div>
         </div>
       </div>
@@ -159,7 +158,7 @@ export default function LandingPage() {
       <div className="bg-gray-50 py-20">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-5xl font-bold text-center mb-16 text-blue-900">
-            Why Choose <span className="text-yellow-400">DevMatch</span>?
+            Why Choose <span className="">DevMatch</span>?
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
