@@ -94,12 +94,12 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-white">
-    
+
             <div className="relative overflow-hidden">
-                <div className="relative max-w-7xl mx-auto px-6 py-20">
+                <div className="relative max-w-7xl mx-auto px-6 py-10">
 
                     <div className="flex justify-center mb-12">
-                        <div className="bg-white p-2 rounded-2xl shadow border border-gray-200">
+                        <div className="bg-white p-6 rounded-2xl shadow border border-gray-200">
                             <img src={logo} alt="DevMatch Logo" className="h-12 w-auto" />
                         </div>
                     </div>
@@ -107,9 +107,10 @@ export default function LandingPage() {
                     <div className="text-center text-blue-900">
                         <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
                             Welcome to{" "}
-                            <span className="text-gradient-to-r from-brand-gradientStart to-brand-gradientEnd">
+                            <span className="bg-gradient-to-r from-brand-gradientStart to-brand-gradientEnd bg-clip-text text-transparent">
                                 DevMatch
                             </span>
+
                         </h1>
 
                         <p className="text-xl md:text-2xl mb-16 max-w-4xl mx-auto leading-relaxed opacity-90">
@@ -135,7 +136,7 @@ export default function LandingPage() {
                             </div>
                         )}
 
-                      
+
                         <div className="flex flex-col items-center sm:flex-row gap-6 justify-center mb-20">
                             <Button
                                 text="Join Now"
