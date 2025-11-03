@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaBars, FaTimes, FaSearch, FaPlus, FaBell, FaEnvelope } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import logo from "../images/logo2.png";
@@ -10,13 +10,17 @@ import { useAuth } from "../features/auth/AuthContext";
 const Header = ({ onSearch }: { onSearch?: (text: string) => void }) => {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
-    const { currentUser } = useAuth();
+    const { currentUser , mutate} = useAuth();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setSearchValue(value);
         onSearch?.(value);
     };
+
+    useEffect(()=>{
+        mutate();
+    },[]);
 
     return (
        <div className="mb-3 sticky top-1 z-50 shadow p-2 rounded-lg bg-white bg-opacity-65">
