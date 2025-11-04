@@ -12,3 +12,8 @@ export const getCurrentUser = () =>
 
 export const loginUser = (data: { email: string; password: string }) =>
   axiosInstance.post("/auth/login", data, { withCredentials: true });
+
+
+
+export const logoutUser = () =>
+  axiosInstance.post("/auth/logout", {}, { withCredentials: true });

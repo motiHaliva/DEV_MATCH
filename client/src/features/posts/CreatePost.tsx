@@ -78,7 +78,7 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
   const displayError = error || imageError;
 
   return (
-    <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8 h-100 relative">
+    <div className="bg-white rounded-2xl  p-8 h-100 relative">
       <Button
         onClick={() => navigate('/projects')}
         icon={<AiTwotoneHome className="text-xl" />}

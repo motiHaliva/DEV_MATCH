@@ -1,16 +1,29 @@
 import { useState } from "react";
-import { FaBars, FaTimes, FaSearch, FaPlus, FaBell, FaEnvelope } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaBars, FaTimes, FaSearch, FaPlus, FaBell, FaEnvelope, FaSignOutAlt } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../images/logo2.png";
 import Input from "./Input";
 import Button from "./Button";
 import { getUserInitials } from "../utils/userInitials";
 import { useAuth } from "../features/auth/AuthContext";
+import { logoutUser } from "../api/authApi";
 
 const Header = ({ onSearch }: { onSearch?: (text: string) => void }) => {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
     const { currentUser } = useAuth();
+
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+            navigate('/');
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -19,60 +32,67 @@ const Header = ({ onSearch }: { onSearch?: (text: string) => void }) => {
     };
 
     return (
-       <div className="mb-3 sticky top-1 z-50 shadow p-2 rounded-lg bg-white bg-opacity-65">
-    <header className="pl-5 pr-5">
-        <div className="flex items-center justify-between">
-            {/* Logo - Left */}
-            <div className="flex items-center">
-                <img src={logo} alt="logo" className="w-44" />
-            </div>
+        <div className="mb-3 sticky top-1 z-50 shadow p-2 rounded-lg bg-white bg-opacity-65">
+            <header className="pl-5 pr-5">
+                <div className="flex items-center justify-between">
+                    {/* Logo - Left */}
+                    <div className="flex items-center">
+                        <img src={logo} alt="logo" className="w-44" />
+                    </div>
 
-            {/* Search & Links - Center */}
-            <div className="hidden [@media(min-width:850px)]:flex items-center gap-6">
-                <Input
-                    value={searchValue}
-                    onChange={handleChange}
-                    placeholder="Search projects, freelancers, posts..."
-                    variant="search"
-                    icon={<FaSearch className="text-text-gray" />}
-                    className=""
-                />
-                
-                <div className="flex flex-row gap-4">
-                    <Link to="/CreatePost" className="flex items-center gap-2 text-brand-blue text-sm font-medium hover:underline">
-                        <FaPlus /> Add post
-                    </Link>
+                    {/* Search & Links - Center */}
+                    <div className="hidden [@media(min-width:850px)]:flex items-center gap-6">
+                        <Input
+                            value={searchValue}
+                            onChange={handleChange}
+                            placeholder="Search projects, freelancers, posts..."
+                            variant="search"
+                            icon={<FaSearch className="text-text-gray" />}
+                            className=""
+                        />
 
-                    <Link to="/notifications" className="flex items-center gap-2 text-brand-blue text-sm font-medium hover:underline">
-                        <FaBell /> Notifications
-                    </Link>
+                        <div className="flex flex-row gap-4">
+                            <Link to="/CreatePost" className="flex items-center gap-2 text-brand-blue text-sm font-medium hover:underline">
+                                <FaPlus /> Add post
+                            </Link>
 
-                    <Link to="/messages" className="flex items-center gap-2 text-brand-blue text-sm font-medium hover:underline">
-                        <FaEnvelope /> Messages
-                    </Link>
+                            <Link to="/notifications" className="flex items-center gap-2 text-brand-blue text-sm font-medium hover:underline">
+                                <FaBell /> Notifications
+                            </Link>
+
+                            <Link to="/messages" className="flex items-center gap-2 text-brand-blue text-sm font-medium hover:underline">
+                                <FaEnvelope /> Messages
+                            </Link>
+
+                            <Link to="/"
+                                onClick={handleLogout}
+                                className="flex items-center gap-2 text-brand-blue text-sm font-medium hover:underline"
+                            >
+                                <FaSignOutAlt /> Logout
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Profile & Mobile Menu - Right */}
+                    <div className="flex items-center gap-4">
+                        {/* Profile Button - Desktop only */}
+                        <Link
+                            className="hidden [@media(min-width:850px)]:flex w-14 h-10 rounded-full bg-gradient-to-r from-brand-blueLight to-brand-blue items-center justify-center text-white font-bold text-sm shadow-md cursor-pointer"
+                            to="/profile"
+                        >
+                            {currentUser ? getUserInitials(currentUser.firstname, currentUser.lastname) : "?"}
+                        </Link>
+
+                        {/* Mobile menu button */}
+                        <Button
+                            variant="icon"
+                            icon={<FaBars className="text-xl" />}
+                            onClick={() => setOpen(true)}
+                            className="block [@media(min-width:850px)]:hidden"
+                        />
+                    </div>
                 </div>
-            </div>
 
-            {/* Profile & Mobile Menu - Right */}
-            <div className="flex items-center gap-4">
-                {/* Profile Button - Desktop only */}
-                <Link
-                    className="hidden [@media(min-width:850px)]:flex w-14 h-10 rounded-full bg-gradient-to-r from-brand-blueLight to-brand-blue items-center justify-center text-white font-bold text-sm shadow-md cursor-pointer"
-                    to="/profile"
-                >
-                    {currentUser ? getUserInitials(currentUser.firstname, currentUser.lastname) : "?"}
-                </Link>
-
-                {/* Mobile menu button */}
-                <Button
-                    variant="icon"
-                    icon={<FaBars className="text-xl" />}
-                    onClick={() => setOpen(true)}
-                    className="block [@media(min-width:850px)]:hidden"
-                />
-            </div>
-        </div>
-  
 
                 {/* Mobile sidebar menu */}
                 {open && (
@@ -107,6 +127,14 @@ const Header = ({ onSearch }: { onSearch?: (text: string) => void }) => {
                                 <li>
                                     <Link to="/messages" className="flex items-center gap-2">
                                         <FaEnvelope /> <span>Messages</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/"
+                                        onClick={handleLogout}
+                                        className="flex items-center gap-2 text-brand-blue text-sm font-medium hover:underline"
+                                    >
+                                        <FaSignOutAlt /> Logout
                                     </Link>
                                 </li>
                             </ul>

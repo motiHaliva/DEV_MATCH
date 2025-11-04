@@ -7,20 +7,32 @@ const { Pool } = pg;
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false,
-    },
+  // הסר את SSL למערכת מקומית
+  // ssl: {
+  //   rejectUnauthorized: false,
+  // },
 });
 
 (async () => {
   try {
-    const result = await pool.query('SELECT current_database(), current_user');
+    // הוסף בדיקת טבלאות
+    const result = await pool.query(`
+      SELECT current_database(), current_user;
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public';
+    `);
+    
     console.log("✅ Connected to DB:");
-    console.log("📦 Database:", result.rows[0].current_database);
-    console.log("👤 User:", result.rows[0].current_user);
+    console.log("📦 Database:", result[0].rows[0].current_database);
+    console.log("👤 User:", result[0].rows[0].current_user);
+    console.log("📋 Tables:", result[1].rows.map(row => row.table_name));
+    
   } catch (err) {
     console.error("❌ Failed to connect to DB:", err.message);
-    process.exit(1); // סגור את השרת אם אין חיבור למסד
+   console.log(err.message);
+   
+    process.exit(1);
   }
 })();
 
