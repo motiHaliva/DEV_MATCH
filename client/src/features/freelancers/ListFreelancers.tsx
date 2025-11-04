@@ -243,8 +243,14 @@ const ListFreelancers = () => {
                     currentUserId={currentUser?.id}
                   />
                 </div>
+                
               ))
-            ) : (
+      
+            ) 
+            
+            
+            
+            : (
               <p className="text-center w-full py-10 text-gray-500">
                 {search || Object.keys(filters).length > 0 
                   ? "No freelancers found matching your criteria." 
@@ -252,9 +258,11 @@ const ListFreelancers = () => {
                 }
               </p>
             )}
-          </div>
 
-          {!loading && freelancers.length > 0 && (
+             
+          </div>
+           <div className="mx-auto lg:mr-72">
+                 {!loading && freelancers.length > 0 && (
             <LoadMore
               currentPage={pagination.current_page}
               totalPages={pagination.total_pages}
@@ -265,9 +273,11 @@ const ListFreelancers = () => {
               loading={loadingMore}
             />
           )}
+          </div>
         </>
       )}
     </div>
+
   );
 };
 

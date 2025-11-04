@@ -182,9 +182,11 @@ const ListPosts = () => {
               </div>
             )}
           </div>
+          
 
+          <div className="">
           {!loading && posts.length > 0 && (
-            <LoadMore
+            <LoadMore 
               currentPage={pagination.current_page}
               totalPages={pagination.total_pages}
               hasNext={pagination.has_next}
@@ -194,6 +196,7 @@ const ListPosts = () => {
               loading={loadingMore}
             />
           )}
+          </div>
         </>
       )}
     </div>

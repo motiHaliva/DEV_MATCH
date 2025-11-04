@@ -6,6 +6,7 @@ import ProfileContent from "./ProfileContent";
 import PostsSection from "./PostsSection";
 import { useAuth } from "../../../auth/AuthContext";
 import { toast } from "react-toastify"; // <-- add this import
+import Button from "../../../../ui/Button";
 
 const FreelancerProfile = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -90,6 +91,20 @@ const FreelancerProfile = () => {
                 isOwnProfile={isOwnProfile}
               />
             )}
+
+ {!isOwnProfile && currentUser && (
+  <div className="flex justify-center p-6 pt-0">          
+    <Button
+      text="MATCH"
+      variant="blue"
+      className="px-8 py-3 text-base font-semibold"
+      onClick={() => {
+        console.log("Match clicked");
+      }}
+    />
+  </div>
+)}
+
           </>
         )}
       </div>

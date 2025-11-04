@@ -34,7 +34,8 @@ const LoadMore: React.FC<LoadMoreProps> = ({
   }
 
   return (
-    <div className="flex flex-col items-center py-6 space-y-4">
+    <div className='flex justify-center items-center'>
+    <div className="flex flex-col items-center py-6 space-y-4 w-3/4 ">
       {/* מידע על התוצאות הנוכחיות */}
       <div className="text-center">
         <p className="text-sm text-gray-600">
@@ -62,6 +63,7 @@ const LoadMore: React.FC<LoadMoreProps> = ({
       <p className="text-xs text-gray-400">
         Page {currentPage} of {totalPages}
       </p>
+    </div>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import Button from '../../ui/Button';
 import { getUserInitials } from '../../utils/userInitials';
 import type { CommentProps } from './type';
 import { useAuth } from '../auth/AuthContext';
-import { toast } from "react-toastify"; // <-- ייבוא חדש
+import { toast } from "react-toastify"; 
 
 const Comment = ({ comment, onCommentUpdated, onCommentDeleted }: CommentProps) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -32,8 +32,7 @@ const Comment = ({ comment, onCommentUpdated, onCommentDeleted }: CommentProps) 
     };
 
     const handleDelete = async () => {
-        if (!confirm('Are you sure you want to delete this comment?')) return;
-
+    
         setLoading(true);
         try {
             await deleteComment(comment.id);

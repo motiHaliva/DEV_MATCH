@@ -235,6 +235,7 @@ const ListProjects = () => {
               </p>
             )}
           </div>
+  <div className="mx-auto lg:mr-72">
 
           {!loading && projects.length > 0 && (
             <LoadMore
@@ -247,6 +248,7 @@ const ListProjects = () => {
               loading={loadingMore}
             />
           )}
+          </div>
         </>
       )}
     </div>

@@ -1,10 +1,10 @@
+import { useState, useEffect } from 'react';
 import Input from '../../../../ui/Input';
 import Button from '../../../../ui/Button';
 import Select from 'react-select';
-import type { EditProfilePropsFreelance  } from '../../type';
+import type { EditProfilePropsFreelance } from '../../type';
 import { FaUser, FaBriefcase, FaTags } from 'react-icons/fa';
 import { validateFreelancerProfile } from '../../../../utils/validateFreelancerProfile';
-import { useState } from 'react';
 
 const EditProfile = ({
   profile,
@@ -16,10 +16,13 @@ const EditProfile = ({
   handleChange,
   setSelectedTitles,
   setSelectedSkills,
-  handleSave
+  handleSave,
 }: EditProfilePropsFreelance) => {
   const [formError, setFormError] = useState('');
+  const [cities, setCities] = useState<{ label: string; value: string }[]>([]);
+  const [loadingCities, setLoadingCities] = useState(false);
 
+  // סגנון אחיד ל-select
   const customSelectStyles = {
     control: (provided: any, state: any) => ({
       ...provided,
@@ -46,6 +49,44 @@ const EditProfile = ({
     }),
   };
 
+  // להביא את רשימת היישובים מ-data.gov.il
+  useEffect(() => {
+    const fetchCities = async () => {
+      setLoadingCities(true);
+      try {
+        const res = await fetch(
+          'https://data.gov.il/api/3/action/datastore_search?resource_id=8f714b6f-c35c-4b40-a0e7-547b675eee0e&limit=5000'
+        );
+        const json = await res.json();
+
+        const options = (json.result?.records || [])
+          // קח את שם העיר בעברית
+          .map((row: any) => (row.city_name_he || row.city_name_en || '').trim())
+          // נפטרים מריקים
+          .filter((name: string) => !!name)
+          // לפעמים יש "לא רשום" – לא צריך בטופס
+          .filter((name: string) => name !== 'לא רשום')
+          // כפולים
+          .filter((name: string, index: number, arr: string[]) => arr.indexOf(name) === index)
+          // מיון לפי עברית
+          .sort((a: string, b: string) => a.localeCompare(b, 'he'))
+          // להפוך לאובייקט שה-select צריך
+          .map((name: string) => ({
+            label: name,
+            value: name,
+          }));
+
+        setCities(options);
+      } catch (err) {
+        console.error('failed to load cities', err);
+      } finally {
+        setLoadingCities(false);
+      }
+    };
+
+    fetchCities();
+  }, []);
+
   const onSave = () => {
     setFormError('');
     const isValid = validateFreelancerProfile(profile, setFormError);
@@ -56,41 +97,65 @@ const EditProfile = ({
 
   return (
     <div className="space-y-8">
+      {/* Personal Info */}
       <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-8">
           <FaUser className="text-blue-600 text-xl" />
           <h2 className="text-2xl font-bold text-gray-900">Personal Information</h2>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-6">
-            <Input 
-              label="First Name" 
-              name="firstname" 
-              value={profile.firstname} 
-              onChange={handleChange} 
+            <Input
+              label="First Name"
+              name="firstname"
+              value={profile.firstname}
+              onChange={handleChange}
             />
-            <Input 
-              label="Last Name" 
-              name="lastname" 
-              value={profile.lastname} 
-              onChange={handleChange} 
+            <Input
+              label="Last Name"
+              name="lastname"
+              value={profile.lastname}
+              onChange={handleChange}
             />
           </div>
+
           <div className="space-y-6">
-            <Input 
-              label="Email" 
-              name="email" 
-              type="email" 
-              value={profile.email} 
-              onChange={handleChange} 
+            <Input
+              label="Email"
+              name="email"
+              type="email"
+              value={profile.email}
+              onChange={handleChange}
             />
-            <Input 
-              label="Location" 
-              name="location" 
-              value={profile.location || ""} 
-              onChange={handleChange} 
-            />
+
+            {/* Location from API */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Location
+              </label>
+              <Select
+                isClearable
+                isLoading={loadingCities}
+                options={cities}
+                value={
+                  profile.location
+                    ? { label: profile.location, value: profile.location }
+                    : null
+                }
+                onChange={(selected) => {
+                  handleChange({
+                    target: {
+                      name: 'location',
+                      value: selected ? (selected as any).value : '',
+                    },
+                  } as React.ChangeEvent<HTMLInputElement>);
+                }}
+                styles={customSelectStyles}
+                placeholder="Select city..."
+                classNamePrefix="react-select"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -101,35 +166,39 @@ const EditProfile = ({
           <FaBriefcase className="text-blue-600 text-xl" />
           <h2 className="text-2xl font-bold text-gray-900">Professional Information</h2>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <Input 
-            label="Professional Title" 
-            name="headline" 
-            value={profile.headline || ""} 
-            onChange={handleChange} 
+          <Input
+            label="Professional Title"
+            name="headline"
+            value={profile.headline || ''}
+            onChange={handleChange}
           />
-          <Input 
-            label="Years of Experience" 
-            name="experience_years" 
-            type="number" 
-             value={profile.experience_years !== undefined ? profile.experience_years.toString() : ''}
-            onChange={handleChange} 
+          <Input
+            label="Years of Experience"
+            name="experience_years"
+            type="number"
+            value={
+              profile.experience_years !== undefined
+                ? profile.experience_years.toString()
+                : ''
+            }
+            onChange={handleChange}
           />
         </div>
-        
+
         <div className="mb-6">
           <label className="block text-sm font-semibold text-gray-700 mb-3">
             Professional Bio
           </label>
           <textarea
             name="bio"
-            value={profile.bio || ""} 
+            value={profile.bio || ''}
             onChange={handleChange}
             rows={4}
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
             placeholder="Tell about yourself, your experience and the services you offer..."
-          required
+            required
           />
         </div>
 
@@ -142,9 +211,14 @@ const EditProfile = ({
             id="available"
             className="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
           />
-          <label htmlFor="available" className="text-base font-medium text-gray-800 select-none flex items-center gap-2">
+          <label
+            htmlFor="available"
+            className="text-base font-medium text-gray-800 select-none flex items-center gap-2"
+          >
             <span>Available for work</span>
-            <span className="text-sm text-gray-500">(will be displayed on your profile)</span>
+            <span className="text-sm text-gray-500">
+              (will be displayed on your profile)
+            </span>
           </label>
         </div>
       </div>
@@ -155,7 +229,7 @@ const EditProfile = ({
           <FaTags className="text-blue-600 text-xl" />
           <h2 className="text-2xl font-bold text-gray-900">Skills & Specializations</h2>
         </div>
-        
+
         <div className="space-y-8">
           <div>
             <label className="block text-base font-semibold text-gray-700 mb-4">
@@ -163,9 +237,16 @@ const EditProfile = ({
             </label>
             <Select
               isMulti
-              options={allTitles.map((title) => ({ label: title.name, value: title.id }))}
+              options={allTitles.map((title) => ({
+                label: title.name,
+                value: title.id,
+              }))}
               value={selectedTitles}
-              onChange={(selected) => setSelectedTitles(selected as { label: string; value: number }[])}
+              onChange={(selected) =>
+                setSelectedTitles(
+                  selected as { label: string; value: number }[]
+                )
+              }
               styles={customSelectStyles}
               classNamePrefix="react-select"
               placeholder="Select specializations..."
@@ -189,9 +270,16 @@ const EditProfile = ({
             </label>
             <Select
               isMulti
-              options={allSkills.map((skill) => ({ label: skill.name, value: skill.id }))}
+              options={allSkills.map((skill) => ({
+                label: skill.name,
+                value: skill.id,
+              }))}
               value={selectedSkills}
-              onChange={(selected) => setSelectedSkills(selected as { label: string; value: number }[])}
+              onChange={(selected) =>
+                setSelectedSkills(
+                  selected as { label: string; value: number }[]
+                )
+              }
               styles={customSelectStyles}
               classNamePrefix="react-select"
               placeholder="Select skills..."
@@ -219,10 +307,10 @@ const EditProfile = ({
           </div>
         )}
         <div className="flex justify-center">
-          <Button 
-            text={isNewProfile ? "Create Profile ✨" : "Save Changes 💾"} 
-            variant="blue" 
-            onClick={onSave} 
+          <Button
+            text={isNewProfile ? 'Create Profile ✨' : 'Save Changes 💾'}
+            variant="blue"
+            onClick={onSave}
           />
         </div>
       </div>
