@@ -7,7 +7,7 @@ const { Pool } = pg;
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  // הסר את SSL למערכת מקומית
+  // בסביבה מקומית אין צורך ב-SSL
   // ssl: {
   //   rejectUnauthorized: false,
   // },
@@ -15,7 +15,6 @@ const pool = new Pool({
 
 (async () => {
   try {
-    // הוסף בדיקת טבלאות
     const result = await pool.query(`
       SELECT current_database(), current_user;
       SELECT table_name 
@@ -30,8 +29,7 @@ const pool = new Pool({
     
   } catch (err) {
     console.error("❌ Failed to connect to DB:", err.message);
-   console.log(err.message);
-   
+    console.log(err.message);
     process.exit(1);
   }
 })();

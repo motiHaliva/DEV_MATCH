@@ -1,6 +1,6 @@
 import FreelancerModel from "../models/FreelancerModel.js";
 import freelancerSchema from "../validitions/freelancerSchema.js";
-import {updateUserSchema} from "../validitions/userSchema.js"
+import { updateUserSchema } from "../validitions/userSchema.js"
 import { sanitizeInput } from "../sanitize/sanitize.js";
 import BaseModel from "../models/BaseModel.js";
 
@@ -8,7 +8,7 @@ import BaseModel from "../models/BaseModel.js";
 export const getAllFreelancers = async (req, res) => {
   try {
     console.log("🔍 getAllFreelancers called with query:", req.query);
-    
+
     const {
       search,
       is_available,
@@ -18,7 +18,7 @@ export const getAllFreelancers = async (req, res) => {
       limit = 10,
       sort,
     } = req.query;
-    
+
     const values = [];
     let where = `users.deleted_at IS NULL AND freelancers.deleted_at IS NULL`;
 
@@ -38,12 +38,12 @@ export const getAllFreelancers = async (req, res) => {
       where += ` AND freelancers.is_available = $${values.length + 1}`;
       values.push(is_available === "true");
     }
-   
+
     if (min_experience && min_experience.trim() !== '' && !isNaN(parseInt(min_experience))) {
       where += ` AND freelancers.experience_years >= $${values.length + 1}`;
       values.push(parseInt(min_experience));
     }
-   
+
     if (max_experience && max_experience.trim() !== '' && !isNaN(parseInt(max_experience))) {
       where += ` AND freelancers.experience_years <= $${values.length + 1}`;
       values.push(parseInt(max_experience));
@@ -103,7 +103,7 @@ export const createFreelancer = async (req, res) => {
   try {
     const userId = req.user.id;
     const sanitizedData = sanitizeInput(req.body);
-    
+
     const {
       firstname, lastname, email, profile_image,
       is_available, headline, bio, experience_years, location
@@ -155,12 +155,12 @@ export const updateFreelancer = async (req, res) => {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    
+
     const freelancer = await FreelancerModel.findById(req.params.id);
     if (!freelancer) {
       return res.status(404).json({ error: "Freelancer not found" });
     }
-    
+
     sanitizedData.updated_at = new Date();
     const updated = await FreelancerModel.update(req.params.id, sanitizedData);
     res.json(updated);
@@ -210,15 +210,15 @@ export const getMyFreelancerProfile = async (req, res) => {
                f.id, f.headline, f.bio, f.experience_years, f.location, 
                f.is_available, f.rating, f.rating_count, f.created_at, f.updated_at, f.user_id
     `;
-    
+
     const profileResult = await BaseModel.runRawQuery(profileQuery, [userId]);
-    
+
     if (!profileResult.length) {
       return res.status(404).json({ error: "User not found" });
     }
-    
+
     const profile = profileResult[0];
-    
+
     // אם אין פרופיל פרילנסר
     if (!profile.freelancer_id) {
       return res.json({
@@ -235,15 +235,15 @@ export const getMyFreelancerProfile = async (req, res) => {
         skills: []
       });
     }
-    
+
     // עיבוד titles ו-skills
-    const titles = profile.titles_string ? 
+    const titles = profile.titles_string ?
       profile.titles_string.split('|').map((name, index) => ({
         id: parseInt(profile.title_ids_string.split('|')[index]),
         name: name
       })).filter(item => item.name && !isNaN(item.id)) : [];
-      
-    const skills = profile.skills_string ? 
+
+    const skills = profile.skills_string ?
       profile.skills_string.split('|').map((name, index) => ({
         id: parseInt(profile.skill_ids_string.split('|')[index]),
         name: name
@@ -288,7 +288,7 @@ export const updateMyFreelancerProfile = async (req, res) => {
     const userId = req.user.id;
     const sanitizedData = sanitizeInput(req.body);
 
-    
+
 
 
     // const { error: userError } = updateUserSchema.validate(sanitizedData);
@@ -298,8 +298,8 @@ export const updateMyFreelancerProfile = async (req, res) => {
     // if (freelancerError) return res.status(400).json({ error: freelancerError.details[0].message });
 
 
-    
-    
+
+
     const {
       firstname, lastname, email, profile_image,
       is_available, headline, bio, experience_years, location
@@ -361,7 +361,7 @@ export const updateMyFreelancerProfile = async (req, res) => {
 export const getFreelancerByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
-    
+
     const query = `
       SELECT 
         f.id as freelancer_id, f.headline, f.bio, f.experience_years, f.location,
@@ -371,16 +371,16 @@ export const getFreelancerByUserId = async (req, res) => {
       JOIN users u ON f.user_id = u.id
       WHERE u.id = $1 AND u.deleted_at IS NULL AND f.deleted_at IS NULL
     `;
-    
+
     const result = await BaseModel.runRawQuery(query, [userId]);
     const freelancer = result[0];
-    
+
     if (!freelancer) {
       return res.status(404).json({ error: "Freelancer profile not found" });
     }
 
     res.json(freelancer);
-    
+
   } catch (err) {
     console.error("❌ Error fetching freelancer by user ID:", err);
     res.status(500).json({ error: "Server error" });
@@ -390,7 +390,7 @@ export const getFreelancerByUserId = async (req, res) => {
 export const getFullFreelancerProfile = async (req, res) => {
   try {
     const userId = req.params.userId;
-    
+
     // שליפת פרופיל מלא עם skills ו-titles
     const profileQuery = `
       SELECT 
@@ -412,15 +412,15 @@ export const getFullFreelancerProfile = async (req, res) => {
                f.id, f.headline, f.bio, f.experience_years, f.location, 
                f.is_available, f.rating, f.rating_count, f.created_at, f.updated_at, f.user_id
     `;
-    
+
     const profileResult = await BaseModel.runRawQuery(profileQuery, [userId]);
-    
+
     if (!profileResult.length) {
       return res.status(404).json({ error: "User not found" });
     }
-    
+
     const profile = profileResult[0];
-    
+
     // אם אין פרופיל פרילנסר
     if (!profile.freelancer_id) {
       return res.json({
@@ -438,24 +438,24 @@ export const getFullFreelancerProfile = async (req, res) => {
         reviews: { data: [], totalCount: 0, averageRating: 0 }
       });
     }
-    
+
     // עיבוד titles ו-skills
-    const titles = profile.titles_string ? 
+    const titles = profile.titles_string ?
       profile.titles_string.split('|').map((name, index) => ({
         id: parseInt(profile.title_ids_string.split('|')[index]),
         name: name
       })).filter(item => item.name && !isNaN(item.id)) : [];
-      
-    const skills = profile.skills_string ? 
+
+    const skills = profile.skills_string ?
       profile.skills_string.split('|').map((name, index) => ({
         id: parseInt(profile.skill_ids_string.split('|')[index]),
         name: name
       })).filter(item => item.name && !isNaN(item.id)) : [];
-    
+
     // שליפת ביקורות
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.reviewsLimit) || 5;
-    
+
     const reviewsResult = await BaseModel.paginateRaw({
       select: `r.rating, r.comment, r.created_at, u.firstname, u.lastname, u.profile_image as user_avatar`,
       from: `freelancer_ratings r JOIN users u ON r.client_id = u.id`,

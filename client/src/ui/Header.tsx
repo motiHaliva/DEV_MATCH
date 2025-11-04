@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaBars, FaTimes, FaSearch, FaPlus, FaBell, FaEnvelope, FaSignOutAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../images/logo2.png";
@@ -11,8 +11,7 @@ import { logoutUser } from "../api/authApi";
 const Header = ({ onSearch }: { onSearch?: (text: string) => void }) => {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
-    const { currentUser } = useAuth();
-
+    const { currentUser, mutate } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -24,12 +23,15 @@ const Header = ({ onSearch }: { onSearch?: (text: string) => void }) => {
         }
     };
 
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setSearchValue(value);
         onSearch?.(value);
     };
+
+    useEffect(() => {
+        mutate();
+    }, []);
 
     return (
         <div className="mb-3 sticky top-1 z-50 shadow p-2 rounded-lg bg-white bg-opacity-65">
@@ -92,7 +94,6 @@ const Header = ({ onSearch }: { onSearch?: (text: string) => void }) => {
                         />
                     </div>
                 </div>
-
 
                 {/* Mobile sidebar menu */}
                 {open && (

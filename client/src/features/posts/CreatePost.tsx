@@ -19,10 +19,9 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     post_type: "",
     image_url: ""
   });
-   const { currentUser } = useAuth();
+  const { currentUser } = useAuth();
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
 
   const { imageLoading, imageError, handleImageUpload } = useImageUpload({
     maxSize: 5 * 1024 * 1024,
@@ -42,7 +41,7 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     if (currentUser) {
       setFormData(prev => ({
         ...prev,
-      post_type: currentUser?.role ?? "",
+        post_type: currentUser?.role ?? "",
       }));
     }
   }, [currentUser]);
@@ -67,18 +66,17 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
       setFormData({ content: "", post_type: currentUser?.role || "", image_url: "" });
       if (onPostCreated) onPostCreated();
       toast.success('Post created successfully!');
-       navigate("/freelancers"); 
+      navigate("/freelancers"); 
     } catch (err: any) {
       setError(err.response?.data?.error || 'Error creating post. Please try again.');
       toast.error(err.response?.data?.error || 'Error creating post. Please try again.');
     }
   };
 
-
   const displayError = error || imageError;
 
   return (
-    <div className="bg-white rounded-2xl  p-8 h-100 relative">
+    <div className="bg-white rounded-2xl p-8 h-100 relative">
       <Button
         onClick={() => navigate('/projects')}
         icon={<AiTwotoneHome className="text-xl" />}
@@ -102,7 +100,6 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
             placeholder="Describe your project in detail..."
             required
             disabled={imageLoading}
-
           />
         </div>
 

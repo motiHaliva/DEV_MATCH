@@ -114,7 +114,7 @@ export const getProjectById = async (req, res) => {
     // שליפת בקשות עם פרטי הפרילנסרים
     const requestsQuery = `
       SELECT 
-        r.id AS request_id,
+      r.id AS request_id,
       r.status,
       r.created_at,
       u.id AS freelancer_id,
