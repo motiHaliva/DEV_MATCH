@@ -192,7 +192,7 @@ export const getMyFreelancerProfile = async (req, res) => {
     // שליפת פרופיל מלא עם skills ו-titles
     const profileQuery = `
       SELECT 
-        u.id, u.firstname, u.lastname, u.email, u.profile_image, u.created_at as user_created_at,
+        u.id, u.firstname, u.lastname, u.email, u.phone, u.profile_image, u.created_at as user_created_at,
         f.id AS freelancer_id, f.headline, f.bio, f.experience_years, f.location, 
         f.is_available, f.rating, f.rating_count, f.created_at, f.updated_at, f.user_id,
         COALESCE(string_agg(DISTINCT t.name, '|'), '') as titles_string,
@@ -227,6 +227,7 @@ export const getMyFreelancerProfile = async (req, res) => {
           firstname: profile.firstname,
           lastname: profile.lastname,
           email: profile.email,
+           phone: profile.phone,
           profile_image: profile.profile_image,
           created_at: profile.user_created_at
         },
@@ -255,6 +256,7 @@ export const getMyFreelancerProfile = async (req, res) => {
         firstname: profile.firstname,
         lastname: profile.lastname,
         email: profile.email,
+            phone: profile.phone,
         profile_image: profile.profile_image,
         created_at: profile.user_created_at
       },
@@ -301,17 +303,17 @@ export const updateMyFreelancerProfile = async (req, res) => {
 
 
     const {
-      firstname, lastname, email, profile_image,
+      firstname, lastname, email,phone, profile_image,
       is_available, headline, bio, experience_years, location
     } = sanitizedData;
 
     // עדכון נתוני משתמש
     const updatedUser = await BaseModel.runRawQuery(
       `UPDATE users 
-       SET firstname = $2, lastname = $3, email = $4, profile_image = $5, updated_at = NOW()
+      SET firstname = $2, lastname = $3, email = $4, phone = $5, profile_image = $6, updated_at = NOW()
        WHERE id = $1 AND deleted_at IS NULL 
-       RETURNING id, firstname, lastname, email, profile_image`,
-      [userId, firstname, lastname, email, profile_image]
+       RETURNING id, firstname, lastname, email, phone, profile_image`,
+      [userId, firstname, lastname, email, phone, profile_image]
     );
 
     if (!updatedUser.length) {

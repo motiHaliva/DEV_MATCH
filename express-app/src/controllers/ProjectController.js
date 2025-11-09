@@ -296,14 +296,14 @@ export const getClientProfile = async (req, res) => {
     // שליפת פרטי הקליינט
     const clientQuery = `
       SELECT 
-        id, firstname, lastname, email, profile_image, created_at
+        id, firstname, lastname, email,phone, profile_image, created_at
       FROM users
       WHERE id = $1 AND deleted_at IS NULL
     `;
     
     const clientResult = await BaseModel.runRawQuery(clientQuery, [clientId]);
     
-    console.log("Client query result:", clientResult); // דיבוג
+    console.log("Client query result:", clientResult); 
     
     if (!clientResult.length) {
       console.log("No client found with ID:", clientId); // דיבוג

@@ -12,7 +12,7 @@ import {
 import ClientProfileContent from '../components/ClientProfileContent'
 import ClientPostsSection from './ClientPostsSection';
 import { useAuth } from '../../../auth/AuthContext';
-import { toast } from "react-toastify"; // <-- add this import
+import { toast } from "react-toastify"; 
 
 const ClientProfile = () => {
   const { clientId } = useParams<{ clientId?: string }>();

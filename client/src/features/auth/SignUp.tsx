@@ -7,7 +7,7 @@ import { FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { signUpUser } from "../../api/authApi"
 import { validateSignUpForm } from "../../utils/formUserValidate";
-import { useAuth } from "../auth/AuthContext"; // הוסף את זה!
+import { useAuth } from "../auth/AuthContext"; 
 
 
 type SignUpProps = {
@@ -16,12 +16,12 @@ type SignUpProps = {
   email: string;
   password: string;
   role: "freelancer" | "client" | "admin" | null;
-  phone: string;  // הוספת השדה החדש
+  phone: string;  
 };
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { setCurrentUser } = useAuth(); // הוסף את זה!
+  const { setCurrentUser } = useAuth(); 
 
   const [formData, setFormData] = useState<SignUpProps>({
     firstname: "",
@@ -48,7 +48,7 @@ const SignUp = () => {
     setIsLoading(true);
     try {
       const response = await signUpUser(formData);
-      
+          console.log("📱 Phone number being sent:", formData.phone);
       console.log("✅ SignUp successful, user data:", response.data.user);
 
       setCurrentUser(response.data.user);

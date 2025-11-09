@@ -26,14 +26,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>(emptyCurrent);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = async () => {
-    try {
-      const user = await getCurrentUser();
-      setCurrentUser(user);
-    } catch {
-      setCurrentUser(emptyCurrent);
-    }
-  };
+const fetchUser = async () => {
+  try {
+    const user = await getCurrentUser();
+    console.log("Fetched user data:", user); // הוספת לוג
+    setCurrentUser(user);
+  } catch (error) {
+    console.error("Error fetching user:", error); // הוספת לוג שגיאה
+    setCurrentUser(emptyCurrent);
+  }
+};
 
   useEffect(() => {
     fetchUser().finally(() => setLoading(false));
