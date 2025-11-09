@@ -8,6 +8,7 @@ export const emptyClientProfile: ClientProfileData = {
   firstname: '',
   lastname: '',
   email: '',
+  phone: '',
   profile_image: '',
   created_at: '',
   projects: []

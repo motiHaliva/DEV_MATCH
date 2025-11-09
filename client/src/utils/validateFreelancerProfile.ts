@@ -21,6 +21,7 @@ export const validateFreelancerProfile = (
     return false;
   }
 
+
   if (headline && headline.length > 100) {
     setError("Professional Title must be less than 100 characters");
     return false;

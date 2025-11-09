@@ -13,6 +13,7 @@ const EditProfile = ({ profile, onProfileUpdated, onCancel }: EditProfilePropsPr
     firstname: profile.firstname,
     lastname: profile.lastname,
     email: profile.email,
+    phone: profile.phone,
     profile_image: profile.profile_image,
   });
 
@@ -83,6 +84,16 @@ const EditProfile = ({ profile, onProfileUpdated, onCancel }: EditProfilePropsPr
           placeholder="Enter your email address"
           icon={<FaEnvelope />}
         />
+
+
+               <Input
+            label="Phone Number"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            type="tel"
+            
+          />
 
         {error && (
           <div className="p-4 bg-red-50 border border-red-200 rounded-xl">

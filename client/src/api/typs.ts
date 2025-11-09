@@ -11,6 +11,7 @@ export type CurrentUser = {
   firstname: string;
   lastname: string;
   email: string;
+  phone: string;
   created_at: string;
   profile_image: string;
 };
@@ -20,6 +21,7 @@ export type SignUpProps = {
   lastname: string;
   email: string;
   password: string;
+  phone: string;
   role: "freelancer" | "client" | "admin"|null;
 };
 

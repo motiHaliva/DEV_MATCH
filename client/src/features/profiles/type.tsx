@@ -8,6 +8,7 @@ export type FreelancerProfileData = {
   created_at?: string;
   headline?: string;
   bio?: string;
+  phone?: string;
   experience_years?: number;
   is_available?: boolean;
   location?: string;
@@ -35,6 +36,7 @@ export type ClientProfileData = {
   firstname: string;
   lastname: string;
   email: string;
+  phone?: string;
   created_at?: string;
   profile_image?: string;
   role?:"freelancer"|"client"|"admin"

@@ -3,11 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo.png";
 import Button from "../../ui/Button";
 import Input from "../../ui/Input";
-import { FaEnvelope, FaLock } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { signUpUser } from "../../api/authApi"
 import { validateSignUpForm } from "../../utils/formUserValidate";
 import { useAuth } from "../auth/AuthContext"; // הוסף את זה!
+
 
 type SignUpProps = {
   firstname: string;
@@ -15,6 +16,7 @@ type SignUpProps = {
   email: string;
   password: string;
   role: "freelancer" | "client" | "admin" | null;
+  phone: string;  // הוספת השדה החדש
 };
 
 const SignUp = () => {
@@ -27,6 +29,7 @@ const SignUp = () => {
     email: "",
     password: "",
     role: "freelancer",
+    phone: ""
   });
 
   const [error, setError] = useState("");
@@ -112,6 +115,18 @@ const SignUp = () => {
           value={formData.password}
           onChange={handleChange}
         />
+
+              <Input
+          label="Phone"
+         placeholder="Enter your phone number"
+          icon={<FaPhone />}
+          variant="outline"
+          type="tel"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+        />
+
 
         <div className="text-left mt-5 flex items-center">
           <label className="block font-medium mb-1 text-left mr-3" htmlFor="role">

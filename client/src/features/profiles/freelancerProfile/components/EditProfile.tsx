@@ -129,6 +129,16 @@ const EditProfile = ({
               onChange={handleChange}
             />
 
+            <Input
+            label="Phone Number"
+            name="phone"
+            value={profile.phone}
+            onChange={handleChange}
+            type="tel"
+       
+          />
+
+
             {/* Location from API */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">

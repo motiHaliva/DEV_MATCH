@@ -17,6 +17,7 @@ const emptyCurrent: CurrentUser = {
   firstname: "",
   lastname: "",
   email: "",
+  phone: "",
   created_at: "",
   profile_image: "",
 };

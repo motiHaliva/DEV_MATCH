@@ -111,7 +111,6 @@ async function runMigrations() {
     console.log('📂 Current directory:', process.cwd());
     console.log('📂 Looking for migrations in: src/migrations');
 
-    // בלי PGSSLMODE: 'require'
     const { stdout, stderr } = await execAsync(
       'npx node-pg-migrate up --config migration.config.js',
       {

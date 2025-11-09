@@ -5,7 +5,7 @@ export const validateSignUpForm = (
   formData: SignUpProps,
   setError: (msg: string) => void
 ): boolean => {
-  const { firstname, lastname, email, password, role } = formData;
+  const { firstname, lastname, email, password, phone, role } = formData;
 
   if (!firstname || firstname.length < 2 || firstname.length > 30 || !/^[A-Za-zא-ת\s'-]+$/.test(firstname)) {
     setError("First name must be 2-30 letters and can only contain letters, spaces, - or '");
@@ -21,6 +21,12 @@ export const validateSignUpForm = (
     setError("Please enter a valid email address");
     return false;
   }
+
+   if (!formData.phone) {
+    setError("Phone number is required");
+    return false;
+  }
+
 
   if (role === null || !["freelancer", "client", "admin"].includes(role)) {
     setError("Role must be one of: freelancer, client, admin");

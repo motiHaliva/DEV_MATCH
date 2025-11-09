@@ -54,6 +54,15 @@ const userSchema = Joi.object({
       'string.empty': 'Password is required',
     }),
 
+      phone: Joi.string()
+    .pattern(/^(?:\+972|0)(?:[23489]|5[0-9]|77)[0-9]{7}$/)
+    .required()
+    .messages({
+      'string.empty': 'Phone number is required',
+      'string.pattern.base': 'Please enter a valid Israeli phone number',
+      'any.required': 'Phone number is required'
+    }),
+
   bio: Joi.string()
     .max(500)
     .pattern(/^[\u0590-\u05FF\w\s.,;:'"!?()\-–—@#&%$]*$/)
@@ -69,6 +78,7 @@ export const updateUserSchema = Joi.object({
   firstname: userSchema.extract('firstname'),
   lastname: userSchema.extract('lastname'),
   email: userSchema.extract('email'),
+    phone: userSchema.extract('phone'),
   bio: userSchema.extract('bio'),
   profile_image: Joi.string().uri().allow('', null).optional(),
 });
