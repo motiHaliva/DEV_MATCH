@@ -207,7 +207,7 @@ import projectRoutes from './routes/ProjectRoutes.js';
 import requestsRoutes from './routes/RequestsRoutes.js';
 import AuthRoutes from './routes/AuthRoutes.js';
 import AuthMiddleware from './middleware/AuthMiddleware.js';
-import SkillRoutes from './routes/SkillRoutes. js';
+import SkillRoutes from './routes/SkillRoutes.js';
 import TitleRoutes from './routes/TitleRoutes.js';
 import cookieParser from 'cookie-parser';
 import PostRoutes from './routes/PostRoutes.js';
@@ -221,7 +221,7 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 
 const app = express();
-const PORT = process.env. PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors({
   origin: [
