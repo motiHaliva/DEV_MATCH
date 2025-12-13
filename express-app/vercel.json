@@ -2,8 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "express-app/src/app.js",
-      "use": "@vercel/node"
+      "src": "express-app/package.json",
+      "use":  "@vercel/node"
     }
   ],
   "routes": [
@@ -11,8 +11,5 @@
       "src": "/(.*)",
       "dest": "express-app/src/app.js"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
