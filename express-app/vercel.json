@@ -12,7 +12,7 @@
       "dest": "express-app/src/app.js"
     }
   ],
-  "env":  {
+  "env": {
     "NODE_ENV": "production"
   }
 }

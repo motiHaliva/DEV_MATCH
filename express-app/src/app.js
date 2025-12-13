@@ -23,7 +23,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://dev-match-one.vercel.app'],
+  origin:  process.env.NODE_ENV === 'production'
+    ? ['https://dev-match-q2s2.vercel.app'] 
+    : ['http://localhost:5173'],
   credentials: true,
 }));
 
