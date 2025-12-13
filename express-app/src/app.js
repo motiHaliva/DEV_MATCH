@@ -225,7 +225,7 @@ const PORT = process.env. PORT || 3000;
 
 app.use(cors({
   origin:  process.env.NODE_ENV === 'production'
-    ? ['https://dev-match-q2s2.vercel.app']  // עדכן את זה ל-URL האמיתי שלך
+    ? ['https://dev-match-oqi4.vercel.app']  // עדכן את זה ל-URL האמיתי שלך
     : ['http://localhost:5173'],
   credentials: true,
 }));
