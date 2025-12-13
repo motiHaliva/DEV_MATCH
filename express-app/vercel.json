@@ -2,8 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "express-app/package.json",
-      "use":  "@vercel/node"
+      "src": "express-app/src/app.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["express-app/**"]
+      }
     }
   ],
   "routes": [
