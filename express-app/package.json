@@ -1,15 +1,11 @@
 {
-
-
-
-
   "name": "express-app",
   "version": "1.0.0",
   "type": "module",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-  "dev": "nodemon src/app.js",
+    "dev": "nodemon src/app.js",
     "migrate": "node-pg-migrate up --config migration.config.js",
     "build": "echo 'Build completed'"
   },
