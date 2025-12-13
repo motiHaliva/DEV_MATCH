@@ -224,10 +224,15 @@ const app = express();
 const PORT = process.env. PORT || 3000;
 
 app.use(cors({
-  origin:  process.env.NODE_ENV === 'production'
-    ? ['https://dev-match-oqi4.vercel.app']  // עדכן את זה ל-URL האמיתי שלך
-    : ['http://localhost:5173'],
+  origin: [
+    'https://dev-match-one.vercel.app',   // ← הפרונט שלך
+    'https://dev-match-oqi4.vercel.app',  // ← הבקנד (לבדיקות)
+    'http://localhost:5173',               // ← מקומי
+    'http://localhost:4000'                // ← מקומי
+  ],
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json({ limit: '10mb' }));
