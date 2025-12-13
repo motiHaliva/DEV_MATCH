@@ -26,33 +26,39 @@ const ClientProfile = () => {
 
   const isOwnProfile = !clientId || (currentUser?.id?.toString() === clientId);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!currentUser) return;
+useEffect(() => {
+  const fetchUserData = async () => {
+    if (!currentUser) return;
 
-      setLoading(true);
-      try {
-        if (isOwnProfile) {
-          const profileData = await fetchMyClientProfile();
-          setProfile(profileData);
-          await loadProjects();
-        } else {
-          const profileData = await fetchPublicClientProfile(clientId!);
-          setProfile(profileData);
-          setProjects(profileData.projects);
-        }
-      } catch (error) {
-        console.error("Error loading profile:", error);
-        setProjects([]);
-        toast.error("Failed to load profile data.");
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    try {
+      if (isOwnProfile) {
+        const profileData = await fetchMyClientProfile();
+        setProfile({
+          ...profileData,
+          phone: profileData.phone || ""  // ← הוסף fallback
+        });
+        await loadProjects();
+      } else {
+        const profileData = await fetchPublicClientProfile(clientId! );
+        setProfile({
+          ...profileData,
+          phone: profileData.phone || ""  
+        });
+        setProjects(profileData.projects);
       }
-    };
+    } catch (error) {
+      console.error("Error loading profile:", error);
+      setProjects([]);
+      toast.error("Failed to load profile data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchUserData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser, clientId, isOwnProfile]);
+  fetchUserData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [currentUser, clientId, isOwnProfile]);
 
   const loadProjects = async () => {
     try {

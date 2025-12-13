@@ -22,11 +22,10 @@ export const validateSignUpForm = (
     return false;
   }
 
-   if (!formData.phone) {
-    setError("Phone number is required");
-    return false;
-  }
-
+if (! phone || phone.trim() === "") {
+  setError("Phone number is required");
+  return false;
+}
 
   if (role === null || !["freelancer", "client", "admin"].includes(role)) {
     setError("Role must be one of: freelancer, client, admin");

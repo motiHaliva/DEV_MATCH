@@ -82,13 +82,14 @@ export const fetchMyClientProfile = async () => {
 export const fetchPublicClientProfile = async (clientId: string) => {
   try {
     const response = await axiosInstance.get(`/projects/public/${clientId}`);
-    const { id, firstname, lastname, email, profile_image, created_at, projects: projectResult } = response.data;
+    const { id, firstname, lastname, email,phone, profile_image, created_at, projects: projectResult } = response.data;
     
     return {
       id,
       firstname,
       lastname,
       email,
+      phone,
       profile_image,
       created_at,
       projects: projectResult?.data || [],

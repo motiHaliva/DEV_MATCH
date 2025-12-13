@@ -2,16 +2,17 @@ import type { FreelancerProfileData } from "../features/profiles/type";
 import axiosInstance from "./axiosInstance";
 import type { FreelanceResponse, FreelancerFilters, ReviewsResponse } from "./typs";
 
- export const emptyFreelancerProfile: FreelancerProfileData = {
+const emptyFreelancerProfile: FreelancerProfileData = {
   id: 0,
-  user_id:0,
+  user_id: 0,
   firstname: "",
   lastname: "",
   email: "",
+  phone: "",  
   created_at: "",
-  headline: "",
+  headline:  "",
   bio: "",
-  experience_years:0,
+  experience_years: 0,
   is_available: false,
   location: "",
   profile_image: "",
