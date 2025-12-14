@@ -10,12 +10,12 @@ type InputProps = {
   value?: string;
   name?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-
+  disabled?: boolean; // ✅ הוספה
 };
 
 const variantClasses = {
   outline: "border border-gray-400 rounded-md",
-  search: "bg-gray-100 rounded-full px-4 py-2"
+  search: "bg-gray-100 rounded-full px-4 py-2",
 };
 
 const Input = ({
@@ -28,13 +28,13 @@ const Input = ({
   value = "",
   name = "",
   onChange,
-
+  disabled = false, // ✅ ברירת מחדל
 }: InputProps) => {
   return (
-    <div className={` ${className} py-2 `}>
-      <label className="block mb-2 font-semibold">{label}</label>
+    <div className={`${className} py-2`}>
+      {label && <label className="block mb-2 font-semibold">{label}</label>}
 
-      <div className="relative ">
+      <div className="relative">
         {icon && (
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
             {icon}
@@ -43,12 +43,14 @@ const Input = ({
 
         <input
           onChange={onChange}
-
           value={value}
           type={type}
           name={name}
           placeholder={placeholder}
-          className={`w-full pl-9 py-2 placeholder:text-gray-400 hover:bg-brand-grayLight ${variantClasses[variant]}`}
+          disabled={disabled} // ✅ כאן הקסם
+          className={`w-full pl-9 py-2 placeholder:text-gray-400 hover:bg-brand-grayLight ${
+            variantClasses[variant]
+          }`}
         />
       </div>
     </div>
