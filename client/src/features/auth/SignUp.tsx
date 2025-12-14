@@ -44,7 +44,6 @@ const SignUp = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ✅ מונע שליחה כפולה
     if (isLoading) return;
 
     setError("");
@@ -75,7 +74,7 @@ const SignUp = () => {
   return (
     <div className="flex justify-center">
       {isLoading ? (
-        // ✅ בזמן יצירה: מציג Loader במקום הטופס
+
         <Loader />
       ) : (
         <form

@@ -19,9 +19,10 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     post_type: "",
     image_url: ""
   });
+
   const { currentUser } = useAuth();
   const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false); // ✅ הוספה
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const { imageLoading, imageError, handleImageUpload } = useImageUpload({
@@ -42,10 +43,13 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     if (currentUser) {
       setFormData(prev => ({
         ...prev,
-        post_type: currentUser?. role ??  "",
+        post_type: currentUser?.role ?? "",
       }));
     }
   }, [currentUser]);
+
+  const displayError = error || imageError;
+  const isLoading = imageLoading || isSubmitting; // ✅ לודינג משולב
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -55,31 +59,33 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     setFormData(prev => ({ ...prev, [name]: newValue }));
   };
 
-  const handleSubmit = async (e:  React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // ✅ מונע שליחה כפולה / שליחה בזמן העלאת תמונה
+    if (isLoading) return;
+
     setError('');
-    setIsSubmitting(true); // ✅ התחל loading
+    setIsSubmitting(true);
 
     try {
       const payload = { ...formData };
-      if (! payload.image_url) delete payload.image_url;
+      if (!payload.image_url) delete payload.image_url;
 
       await createPost(payload);
+
       setFormData({ content: "", post_type: currentUser?.role || "", image_url: "" });
-      if (onPostCreated) onPostCreated();
+      onPostCreated?.();
       toast.success('Post created successfully!');
-      navigate("/freelancers"); 
-    } catch (err:  any) {
-      setError(err.response?.data?.error || 'Error creating post.  Please try again.');
-      toast.error(err.response?. data?.error || 'Error creating post. Please try again.');
+      navigate("/freelancers");
+    } catch (err: any) {
+      const msg = err.response?.data?.error || 'Error creating post. Please try again.';
+      setError(msg);
+      toast.error(msg);
     } finally {
-      setIsSubmitting(false); // ✅ סיים loading
+      setIsSubmitting(false);
     }
   };
-
-  const displayError = error || imageError;
-  const isLoading = imageLoading || isSubmitting; // ✅ loading משולב
 
   return (
     <div className="bg-white rounded-2xl p-8 h-100 relative">
@@ -88,7 +94,7 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
         icon={<AiTwotoneHome className="text-xl" />}
         variant="icon"
         className="absolute right-14 top-5 bg-gradient-to-r from-brand-blueLight to-brand-blue text-white p-2 rounded-md shadow-md transition duration-200 hover:scale-105"
-        disabled={isLoading} // ✅ disable
+        disabled={isLoading}
       />
 
       <div className="flex items-center gap-3 mb-8">
@@ -103,10 +109,10 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
             name="content"
             value={formData.content || ''}
             onChange={handleChange}
-            className="h-72 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus: ring-blue-500 focus: border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-72 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
             placeholder="Describe your project in detail..."
             required
-            disabled={isLoading} // ✅ disable
+            disabled={isLoading}
           />
         </div>
 
@@ -117,9 +123,10 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
             accept="image/*"
             onChange={handleImageUpload}
             className="block mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isLoading} // ✅ disable
+            disabled={isLoading}
           />
-          {imageLoading ?  (
+
+          {imageLoading ? (
             <div className="flex items-center gap-2 text-blue-600">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
               <p>Uploading image...</p>
@@ -142,11 +149,11 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
         )}
 
         <Button
-          text={isSubmitting ? "Creating post..." : "Add Post"} // ✅ טקסט דינמי
+          text={isSubmitting ? "Creating post..." : "Add Post"}
           variant="blue"
           type="submit"
-          icon={isSubmitting ? undefined : <MdPostAdd />} // ✅ הסתר אייקון בזמן loading
-          disabled={isLoading} // ✅ disable
+          icon={isSubmitting ? undefined : <MdPostAdd />}
+          disabled={isLoading}
           className={isLoading ? 'opacity-50 cursor-not-allowed' : ''}
         />
       </form>
