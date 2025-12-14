@@ -21,6 +21,7 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
   });
   const { currentUser } = useAuth();
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false); // ✅ הוספה
   const navigate = useNavigate();
 
   const { imageLoading, imageError, handleImageUpload } = useImageUpload({
@@ -41,7 +42,7 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     if (currentUser) {
       setFormData(prev => ({
         ...prev,
-        post_type: currentUser?.role ?? "",
+        post_type: currentUser?. role ??  "",
       }));
     }
   }, [currentUser]);
@@ -54,26 +55,31 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     setFormData(prev => ({ ...prev, [name]: newValue }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e:  React.FormEvent) => {
     e.preventDefault();
 
     setError('');
+    setIsSubmitting(true); // ✅ התחל loading
+
     try {
       const payload = { ...formData };
-      if (!payload.image_url) delete payload.image_url;
+      if (! payload.image_url) delete payload.image_url;
 
       await createPost(payload);
       setFormData({ content: "", post_type: currentUser?.role || "", image_url: "" });
       if (onPostCreated) onPostCreated();
       toast.success('Post created successfully!');
       navigate("/freelancers"); 
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Error creating post. Please try again.');
-      toast.error(err.response?.data?.error || 'Error creating post. Please try again.');
+    } catch (err:  any) {
+      setError(err.response?.data?.error || 'Error creating post.  Please try again.');
+      toast.error(err.response?. data?.error || 'Error creating post. Please try again.');
+    } finally {
+      setIsSubmitting(false); // ✅ סיים loading
     }
   };
 
   const displayError = error || imageError;
+  const isLoading = imageLoading || isSubmitting; // ✅ loading משולב
 
   return (
     <div className="bg-white rounded-2xl p-8 h-100 relative">
@@ -82,6 +88,7 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
         icon={<AiTwotoneHome className="text-xl" />}
         variant="icon"
         className="absolute right-14 top-5 bg-gradient-to-r from-brand-blueLight to-brand-blue text-white p-2 rounded-md shadow-md transition duration-200 hover:scale-105"
+        disabled={isLoading} // ✅ disable
       />
 
       <div className="flex items-center gap-3 mb-8">
@@ -96,10 +103,10 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
             name="content"
             value={formData.content || ''}
             onChange={handleChange}
-            className="h-72 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="h-72 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus: ring-blue-500 focus: border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
             placeholder="Describe your project in detail..."
             required
-            disabled={imageLoading}
+            disabled={isLoading} // ✅ disable
           />
         </div>
 
@@ -109,11 +116,14 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
-            className="block mb-4"
-            disabled={imageLoading}
+            className="block mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading} // ✅ disable
           />
-          {imageLoading ? (
-            <p>Loading image preview...</p>
+          {imageLoading ?  (
+            <div className="flex items-center gap-2 text-blue-600">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+              <p>Uploading image...</p>
+            </div>
           ) : formData.image_url ? (
             <img
               src={formData.image_url}
@@ -132,11 +142,12 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
         )}
 
         <Button
-          text="Add"
+          text={isSubmitting ? "Creating post..." : "Add Post"} // ✅ טקסט דינמי
           variant="blue"
           type="submit"
-          icon={<MdPostAdd />}
-          disabled={imageLoading}
+          icon={isSubmitting ? undefined : <MdPostAdd />} // ✅ הסתר אייקון בזמן loading
+          disabled={isLoading} // ✅ disable
+          className={isLoading ? 'opacity-50 cursor-not-allowed' : ''}
         />
       </form>
     </div>
