@@ -201,7 +201,7 @@
 
 import express from 'express';
 import pool from './db.js';
-import userRoutes from './routes/UserRoutes. js';
+import userRoutes from './routes/UserRoutes.js';
 import freelancerRoutes from './routes/FreelancerRoutes.js';
 import projectRoutes from './routes/ProjectRoutes.js';
 import requestsRoutes from './routes/RequestsRoutes.js';
