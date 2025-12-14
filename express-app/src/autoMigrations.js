@@ -5,7 +5,7 @@ const migrations = [
   // 1. יצירת טבלת users
   {
     name: '1750607754082_create-users-table',
-    sql:  `
+    sql: `
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         firstname VARCHAR(100) NOT NULL,
@@ -20,7 +20,7 @@ const migrations = [
 
   // 2. יצירת טבלת freelancers
   {
-    name:  '1750608625629_create-freelancers-table',
+    name: '1750608625629_create-freelancers-table',
     sql: `
       CREATE TABLE IF NOT EXISTS freelancers (
         id SERIAL PRIMARY KEY,
@@ -67,7 +67,7 @@ const migrations = [
     `
   },
 
-  // 6. הוספת עמודות ל-projects
+  // 6. הוספת עמודות ל-projects (created_at, project_type)
   {
     name: '1750695052872_add-columns-to-projects',
     sql: `
@@ -151,7 +151,7 @@ const migrations = [
 
   // 12. הוספת deleted_at ל-projects
   {
-    name:  '1750839883961_add-deleted-at-to-projects',
+    name: '1750839883961_add-deleted-at-to-projects',
     sql: `
       ALTER TABLE projects
       ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP DEFAULT NULL;
@@ -341,7 +341,7 @@ const migrations = [
   // 26. הוספת deleted_at ל-skills ו-titles
   {
     name: '1754520678383_add-deleted-at-to-skills-and-titles',
-    sql:  `
+    sql: `
       ALTER TABLE skills
       ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP DEFAULT NULL;
 
@@ -356,6 +356,59 @@ const migrations = [
     sql: `
       ALTER TABLE users
       ADD COLUMN IF NOT EXISTS phone VARCHAR(20) DEFAULT '';
+    `
+  },
+
+  // ✅ 28. אכלוס skills ראשוני
+  {
+    name: '1762500000001_seed-skills',
+    sql: `
+      INSERT INTO skills (name) VALUES 
+        ('JavaScript'), ('TypeScript'), ('React'), ('Vue.js'), ('Angular'),
+        ('Node.js'), ('Express'), ('Python'), ('Django'), ('Flask'),
+        ('Java'), ('Spring Boot'), ('PHP'), ('Laravel'), ('Ruby'),
+        ('Ruby on Rails'), ('C#'), ('.NET'), ('Go'), ('Rust'),
+        ('SQL'), ('PostgreSQL'), ('MySQL'), ('MongoDB'), ('Redis'),
+        ('Docker'), ('Kubernetes'), ('AWS'), ('Azure'), ('Google Cloud'),
+        ('Git'), ('CI/CD'), ('GraphQL'), ('REST API'), ('HTML'),
+        ('CSS'), ('Sass'), ('Tailwind CSS'), ('Bootstrap'), ('Material UI'),
+        ('Figma'), ('Adobe XD'), ('UI/UX Design'), ('Mobile Development'),
+        ('React Native'), ('Flutter'), ('Swift'), ('Kotlin'),
+        ('Testing'), ('Jest'), ('Cypress'), ('Selenium'), ('Agile'), ('Scrum'),
+        ('Redux'), ('Next.js'), ('Nuxt.js'), ('Webpack'), ('Vite'),
+        ('TensorFlow'), ('PyTorch'), ('Pandas'), ('NumPy'), ('Scikit-learn'),
+        ('C++'), ('C'), ('Objective-C'), ('Dart'),
+        ('Firebase'), ('Supabase'), ('Vercel'), ('Netlify'), ('Heroku'),
+        ('Linux'), ('Windows'), ('macOS'), ('Bash'), ('PowerShell'),
+        ('Photoshop'), ('Illustrator'), ('Sketch'), ('InVision'), ('Zeplin')
+      ON CONFLICT (name) DO NOTHING;
+    `
+  },
+
+  // ✅ 29. אכלוס titles ראשוני
+  {
+    name: '1762500000002_seed-titles',
+    sql: `
+      INSERT INTO titles (name) VALUES 
+        ('Full Stack Developer'), ('Frontend Developer'), ('Backend Developer'),
+        ('Mobile Developer'), ('DevOps Engineer'), ('Data Scientist'),
+        ('Machine Learning Engineer'), ('UI/UX Designer'), ('Product Manager'),
+        ('Project Manager'), ('QA Engineer'), ('Database Administrator'),
+        ('System Administrator'), ('Security Engineer'), ('Cloud Architect'),
+        ('Software Engineer'), ('Web Developer'), ('React Developer'),
+        ('Node.js Developer'), ('Python Developer'), ('Java Developer'),
+        ('PHP Developer'), ('WordPress Developer'), ('Shopify Developer'),
+        ('E-commerce Developer'), ('Game Developer'), ('AR/VR Developer'),
+        ('Blockchain Developer'), ('API Developer'), ('Technical Writer'),
+        ('Graphic Designer'), ('Video Editor'), ('3D Artist'),
+        ('Content Creator'), ('SEO Specialist'), ('Digital Marketing Specialist'),
+        ('Social Media Manager'), ('Business Analyst'), ('Data Analyst'),
+        ('Copywriter'), ('iOS Developer'), ('Android Developer'),
+        ('Flutter Developer'), ('React Native Developer'), ('Embedded Systems Engineer'),
+        ('IoT Developer'), ('Site Reliability Engineer'), ('Platform Engineer'),
+        ('Solutions Architect'), ('Enterprise Architect'), ('Technical Lead'),
+        ('Engineering Manager'), ('CTO'), ('VP Engineering')
+      ON CONFLICT (name) DO NOTHING;
     `
   }
 ];
@@ -397,7 +450,7 @@ export async function runMigrations() {
           console.log(`  ✅ Completed: ${migration.name}`);
           successCount++;
         } catch (error) {
-          console. error(`  ❌ Failed: ${migration.name}`);
+          console.error(`  ❌ Failed: ${migration.name}`);
           console.error(`     Error: ${error.message}`);
         }
       } else {
