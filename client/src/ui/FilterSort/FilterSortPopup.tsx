@@ -8,12 +8,12 @@ import type { FreelancerFilters, ProjectFilters } from '../../api/typs'
 export type PageType = 'freelancers' | 'projects' | 'posts';
 
 interface FilterSortPopupProps {
-  pageType?: PageType;
-  currentTab?: 'filter' | 'sort';
-  onFiltersChange?: (filters: FreelancerFilters | ProjectFilters) => void;
+  pageType?:  PageType;
+  currentTab?:  'filter' | 'sort';
+  onFiltersChange?:  (filters: FreelancerFilters | ProjectFilters) => void;
   onSortChange?: (sortValue: string) => void;
-  onClose: () => void;
-  isOpen?: boolean;
+  onClose:  () => void;
+  isOpen?:  boolean;
 }
 
 export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
@@ -26,6 +26,10 @@ export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
   const [tab, setTab] = useState<'filter' | 'sort'>(currentTab);
   const [isMobile, setIsMobile] = useState(false);
 
+  // ✅ הוסף useEffect לסנכרון עם currentTab
+  useEffect(() => {
+    setTab(currentTab);
+  }, [currentTab]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -39,7 +43,7 @@ export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
   }, []);
 
   const [freelancerFilters, setFreelancerFilters] = useState<FreelancerFilters>(() => ({
-    is_available: '',
+    is_available:  '',
     min_experience: '',
     max_experience: '',
     sort: '',
@@ -49,7 +53,7 @@ export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
   const [projectFilters, setProjectFilters] = useState<ProjectFilters>(() => ({
     type: '',
     is_open: '',
-    sort: '',
+    sort:  '',
     search: ''
   }));
 
@@ -57,12 +61,12 @@ export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
     const updated = { ...freelancerFilters, [key]: value };
     setFreelancerFilters(updated);
 
-    if (!isMobile) {
+    if (! isMobile) {
       onFiltersChange?.(updated);
     }
   };
 
-  const handleProjectFilterChange = (key: keyof ProjectFilters, value: string) => {
+  const handleProjectFilterChange = (key:  keyof ProjectFilters, value:  string) => {
     const updated = { ...projectFilters, [key]: value };
     setProjectFilters(updated);
     if (!isMobile) {
@@ -85,7 +89,7 @@ export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
       const cleared: ProjectFilters = {
         type: '',
         is_open: '',
-        sort: '',
+        sort:  '',
         search: '',
       };
       setProjectFilters(cleared);
@@ -103,7 +107,6 @@ export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
   };
 
   if (pageType === 'posts') return null;
-
 
   const MobilePopup = () => (
     <div 
@@ -163,14 +166,13 @@ export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
             text="Clear"
             variant="text"
             onClick={clearFilters}
-            className="px-6 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 flex-1"
+            className="px-6 py-3 border border-gray-300 rounded-lg font-semibold hover: bg-gray-50 flex-1"
           />
         </div>
       </div>
     </div>
   );
 
- 
   const DesktopSidebar = () => (
     <div className="hidden lg:block fixed top-30 right-0 w-80 bg-white border-l border-gray-200 h-screen overflow-y-auto z-40">
       <div className="p-4">
@@ -219,7 +221,6 @@ export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
           />
         </div>
 
-    
         <div className="mt-8 pt-6 border-t border-gray-200">
           <button
             onClick={clearFilters}
@@ -234,10 +235,8 @@ export const FilterSortPopup: React.FC<FilterSortPopupProps> = ({
 
   return (
     <>
-
       {isMobile && isOpen && <MobilePopup />}
-
-      {!isMobile  && <DesktopSidebar />}
+      {!isMobile && <DesktopSidebar />}
     </>
   );
 };
