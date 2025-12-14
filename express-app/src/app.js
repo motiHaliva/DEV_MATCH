@@ -202,24 +202,36 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { checkAndRunMigrations } from './autoMigrations.js';  // ✅ הוסף את זה! 
+import pool from './db.js';
+import { checkAndRunMigrations } from './autoMigrations.js';
+
+// ✅ Import routes synchronously
+import AuthRoutes from './routes/AuthRoutes.js';
+import AuthMiddleware from './middleware/AuthMiddleware.js';
+import userRoutes from './routes/UserRoutes.js';
+import freelancerRoutes from './routes/FreelancerRoutes.js';
+import projectRoutes from './routes/ProjectRoutes.js';
+import requestsRoutes from './routes/RequestsRoutes.js';
+import SkillRoutes from './routes/SkillRoutes. js';
+import TitleRoutes from './routes/TitleRoutes.js';
+import PostRoutes from './routes/PostRoutes. js';
+import PostCommentRoutes from './routes/PostCommentRoutes.js';
+import PostLikeRoutes from './routes/PostLikeRoutes. js';
+import freelancerReviewsRoutes from './routes/freelancerReviewsRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ הרץ migrations בהתחלה (אוטומטי)
+// ✅ הרץ migrations (לא חוסם!)
 let migrationsRun = false;
-const initPromise = checkAndRunMigrations().then(success => {
-  migrationsRun = success;
-  if (success) {
-    console.log('🎉 Database initialized successfully');
-  } else {
-    console.warn('⚠️ Database initialization had issues');
-  }
-}).catch(err => {
-  console.error('❌ Migration initialization error:', err);
-  migrationsRun = false;
-});
+checkAndRunMigrations()
+  .then(success => {
+    migrationsRun = success;
+    console.log(success ? '✅ Migrations completed' : '⚠️ Migrations had issues');
+  })
+  .catch(err => {
+    console.error('❌ Migration error:', err);
+  });
 
 // ✅ CORS
 app.use(cors({
@@ -238,42 +250,20 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
-// ✅ Middleware - וודא שמיגרציות רצו לפני כל request
-app.use(async (req, res, next) => {
-  if (! migrationsRun) {
-    await initPromise;
-  }
-  next();
-});
-
 // ✅ Root endpoint
 app.get('/', (req, res) => {
   res.json({
-    message: '🚀 DEV_MATCH API is running! ',
+    message: '🚀 DEV_MATCH API is running!',
     version: '1.0.0',
     status: 'OK',
     migrationsRun: migrationsRun,
     timestamp: new Date().toISOString(),
     environment: process.env. NODE_ENV || 'development',
     endpoints: {
-      health: 'GET /health - Database health check',
-      stats: 'GET /stats - Platform statistics',
-      auth: {
-        signup: 'POST /auth/signup',
-        login: 'POST /auth/login'
-      },
-      protected: {
-        users: '/users/* (requires authentication)',
-        freelancers:  '/freelancers/* (requires authentication)',
-        projects: '/projects/* (requires authentication)',
-        requests:  '/requests/* (requires authentication)',
-        skills: '/skills/* (requires authentication)',
-        titles: '/titles/* (requires authentication)',
-        posts: '/posts/* (requires authentication)',
-        postComments: '/post-comments/* (requires authentication)',
-        postLikes: '/post-likes/* (requires authentication)',
-        freelancerReviews: '/freelancer-reviews/* (requires authentication)'
-      }
+      health: 'GET /health',
+      stats: 'GET /stats',
+      auth: 'POST /auth/signup, POST /auth/login',
+      protected: '/users/*, /freelancers/*, /projects/* (require auth)'
     }
   });
 });
@@ -281,7 +271,6 @@ app.get('/', (req, res) => {
 // ✅ Health check
 app.get('/health', async (req, res) => {
   try {
-    const { default: pool } = await import('./db.js');
     const result = await pool.query('SELECT NOW()');
     const tablesCheck = await pool.query(`
       SELECT table_name 
@@ -295,9 +284,9 @@ app.get('/health', async (req, res) => {
       database: 'Connected',
       timestamp: result.rows[0].now,
       tables: tablesCheck.rows. map(row => row.table_name),
-      tablesCount:  tablesCheck.rows.length,
+      tablesCount: tablesCheck.rows.length,
       migrationsRun: migrationsRun,
-      environment: process.env. NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development'
     });
   } catch (error) {
     res.status(500).json({
@@ -311,8 +300,6 @@ app.get('/health', async (req, res) => {
 // ✅ Stats endpoint
 app.get('/stats', async (req, res) => {
   try {
-    const { default: pool } = await import('./db.js');
-    
     const users = await pool.query('SELECT COUNT(*) FROM users');
     const freelancers = await pool.query('SELECT COUNT(*) FROM freelancers');
     const projects = await pool.query('SELECT COUNT(*) FROM projects');
@@ -331,64 +318,34 @@ app.get('/stats', async (req, res) => {
   }
 });
 
-// ✅ טעינת Routes
-let routesLoaded = false;
+// ✅ Routes - טעינה סינכרונית
+app.use('/auth', AuthRoutes);
+app.use('/users', AuthMiddleware, userRoutes);
+app.use('/freelancers', AuthMiddleware, freelancerRoutes);
+app.use('/projects', AuthMiddleware, projectRoutes);
+app.use('/requests', AuthMiddleware, requestsRoutes);
+app.use('/skills', AuthMiddleware, SkillRoutes);
+app.use('/titles', AuthMiddleware, TitleRoutes);
+app.use('/posts', AuthMiddleware, PostRoutes);
+app.use('/post-comments', AuthMiddleware, PostCommentRoutes);
+app.use('/post-likes', AuthMiddleware, PostLikeRoutes);
+app.use('/freelancer-reviews', AuthMiddleware, freelancerReviewsRoutes);
 
-try {
-  const [
-    { default: AuthRoutes },
-    { default:  AuthMiddleware },
-    { default:  userRoutes },
-    { default:  freelancerRoutes },
-    { default: projectRoutes },
-    { default: requestsRoutes },
-    { default:  SkillRoutes },
-    { default: TitleRoutes },
-    { default: PostRoutes },
-    { default: PostCommentRoutes },
-    { default:  PostLikeRoutes },
-    { default: freelancerReviewsRoutes }
-  ] = await Promise.all([
-    import('./routes/AuthRoutes.js'),
-    import('./middleware/AuthMiddleware.js'),
-    import('./routes/UserRoutes.js'),
-    import('./routes/FreelancerRoutes.js'),
-    import('./routes/ProjectRoutes.js'),
-    import('./routes/RequestsRoutes.js'),
-    import('./routes/SkillRoutes.js'),
-    import('./routes/TitleRoutes.js'),
-    import('./routes/PostRoutes.js'),
-    import('./routes/PostCommentRoutes. js'),
-    import('./routes/PostLikeRoutes.js'),
-    import('./routes/freelancerReviewsRoutes. js')
-  ]);
-
-  app.use('/auth', AuthRoutes);
-  app.use('/users', AuthMiddleware, userRoutes);
-  app.use('/freelancers', AuthMiddleware, freelancerRoutes);
-  app.use('/projects', AuthMiddleware, projectRoutes);
-  app.use('/requests', AuthMiddleware, requestsRoutes);
-  app.use('/skills', AuthMiddleware, SkillRoutes);
-  app.use('/titles', AuthMiddleware, TitleRoutes);
-  app.use('/posts', AuthMiddleware, PostRoutes);
-  app.use('/post-comments', AuthMiddleware, PostCommentRoutes);
-  app.use('/post-likes', AuthMiddleware, PostLikeRoutes);
-  app.use('/freelancer-reviews', AuthMiddleware, freelancerReviewsRoutes);
-  
-  routesLoaded = true;
-  console.log('✅ All routes loaded successfully');
-} catch (error) {
-  console.error('❌ Error loading routes:', error. message);
-}
+console.log('✅ All routes registered');
 
 // ✅ Export for Vercel
 export default app;
 
 // ✅ Local development
 if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
+  app.listen(PORT, async () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📡 Routes loaded: ${routesLoaded ?  'Yes' : 'No'}`);
-    console.log(`🗄️  Migrations:  ${migrationsRun ? 'Completed' : 'Pending'}`);
+    
+    try {
+      const dbTest = await pool.query('SELECT NOW()');
+      console.log('✅ Connected to PostgreSQL! ', dbTest.rows[0].now);
+    } catch (err) {
+      console.error('❌ Failed to connect to PostgreSQL:', err. message);
+    }
   });
 }
