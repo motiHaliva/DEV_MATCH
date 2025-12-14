@@ -206,7 +206,7 @@ import pool from './db.js';
 import { checkAndRunMigrations } from './autoMigrations.js';
 
 // ✅ Import routes - בדוק שאין רווחים! 
-import AuthRoutes from './routes/AuthRoutes. js';
+import AuthRoutes from './routes/AuthRoutes.js';
 import AuthMiddleware from './middleware/AuthMiddleware.js';
 import userRoutes from './routes/UserRoutes.js';
 import freelancerRoutes from './routes/FreelancerRoutes.js';
