@@ -205,18 +205,18 @@ import cookieParser from 'cookie-parser';
 import pool from './db.js';
 import { checkAndRunMigrations } from './autoMigrations.js';
 
-// ✅ Import routes synchronously
-import AuthRoutes from './routes/AuthRoutes.js';
+// ✅ Import routes - בדוק שאין רווחים! 
+import AuthRoutes from './routes/AuthRoutes. js';
 import AuthMiddleware from './middleware/AuthMiddleware.js';
 import userRoutes from './routes/UserRoutes.js';
 import freelancerRoutes from './routes/FreelancerRoutes.js';
 import projectRoutes from './routes/ProjectRoutes.js';
 import requestsRoutes from './routes/RequestsRoutes.js';
-import SkillRoutes from './routes/SkillRoutes. js';
+import SkillRoutes from './routes/SkillRoutes. js';  // ✅ תוקן! 
 import TitleRoutes from './routes/TitleRoutes.js';
-import PostRoutes from './routes/PostRoutes. js';
+import PostRoutes from './routes/PostRoutes.js';
 import PostCommentRoutes from './routes/PostCommentRoutes.js';
-import PostLikeRoutes from './routes/PostLikeRoutes. js';
+import PostLikeRoutes from './routes/PostLikeRoutes.js';
 import freelancerReviewsRoutes from './routes/freelancerReviewsRoutes.js';
 
 const app = express();
@@ -241,7 +241,7 @@ app.use(cors({
     'http://localhost:5173',
     'http://localhost:4000'
   ],
-  credentials:  true,
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -253,12 +253,12 @@ app.use(cookieParser());
 // ✅ Root endpoint
 app.get('/', (req, res) => {
   res.json({
-    message: '🚀 DEV_MATCH API is running!',
+    message: '🚀 DEV_MATCH API is running! ',
     version: '1.0.0',
     status: 'OK',
-    migrationsRun: migrationsRun,
+    migrationsRun:  migrationsRun,
     timestamp: new Date().toISOString(),
-    environment: process.env. NODE_ENV || 'development',
+    environment: process.env.NODE_ENV || 'development',
     endpoints: {
       health: 'GET /health',
       stats: 'GET /stats',
@@ -318,7 +318,7 @@ app.get('/stats', async (req, res) => {
   }
 });
 
-// ✅ Routes - טעינה סינכרונית
+// ✅ Routes - ללא רווחים! 
 app.use('/auth', AuthRoutes);
 app.use('/users', AuthMiddleware, userRoutes);
 app.use('/freelancers', AuthMiddleware, freelancerRoutes);
@@ -337,7 +337,7 @@ console.log('✅ All routes registered');
 export default app;
 
 // ✅ Local development
-if (process.env.NODE_ENV !== 'production') {
+if (process.env. NODE_ENV !== 'production') {
   app.listen(PORT, async () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     
