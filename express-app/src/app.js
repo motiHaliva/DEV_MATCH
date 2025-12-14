@@ -212,7 +212,7 @@ import userRoutes from './routes/UserRoutes.js';
 import freelancerRoutes from './routes/FreelancerRoutes.js';
 import projectRoutes from './routes/ProjectRoutes.js';
 import requestsRoutes from './routes/RequestsRoutes.js';
-import SkillRoutes from './routes/SkillRoutes. js';  // ✅ תוקן! 
+import SkillRoutes from './routes/SkillRoutes.js';  // ✅ תוקן! 
 import TitleRoutes from './routes/TitleRoutes.js';
 import PostRoutes from './routes/PostRoutes.js';
 import PostCommentRoutes from './routes/PostCommentRoutes.js';
