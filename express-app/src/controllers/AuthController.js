@@ -138,32 +138,31 @@ export const getCurrentUser = async (req, res) => {
 // ===================================
 // ✅ GOOGLE OAUTH HANDLERS
 // ===================================
-
 export const googleCallback = (req, res) => {
   try {
-    // אם הגענו לכאן, passport אימת בהצלחה
     const user = req.user;
 
     if (!user) {
-      // Google authentication failed
-      return res.redirect(`${process.env.CLIENT_URL}/login? error=google_auth_failed`);
+      return res.redirect(`${process.env.CLIENT_URL}/login?error=google_auth_failed`);
     }
 
-    // יצירת JWT token
     const token = jwt.sign(
       { id: user.id, role: user.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    // ✅ הפניה לפרונטאנד עם token
-    res.redirect(`${process.env.CLIENT_URL}/auth/google/success?token=${token}`);
+    // ✅ לשים cookie כמו login רגיל
+    res.cookie('token', token, getCookieOptions());
 
+    // ✅ להפנות לפרונט בלי token ב-URL
+    return res.redirect(`${process.env.CLIENT_URL}/profile`);
   } catch (error) {
     console.error('❌ Google callback error:', error);
-    res.redirect(`${process.env.CLIENT_URL}/login?error=server_error`);
+    return res.redirect(`${process.env.CLIENT_URL}/login?error=server_error`);
   }
 };
+
 
 export const googleAuthFailed = (req, res) => {
   res.redirect(`${process.env.CLIENT_URL}/login?error=no_account`);
