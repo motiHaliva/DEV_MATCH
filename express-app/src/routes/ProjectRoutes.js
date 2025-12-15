@@ -36,19 +36,13 @@ import {
   updateProject,
   deleteProject,
   getProjectById,
-  
-  // ✅ הוסף: 
-  getMyClientProfile,
   updateMyClientProfile
-} from '../controllers/ProjectController. js';
+} from '../controllers/ProjectController.js';
 
 const router = express. Router();
 
-// ✅ SPECIFIC ROUTES FIRST - Client Profile
-router.get('/profile', authorizeRole('client', 'admin'), getMyClientProfile);
-router.put('/profile', authorizeRole('client', 'admin'), updateMyClientProfile);
 
-// Projects routes
+router.put('/profile', authorizeRole('client', 'admin'), updateMyClientProfile);
 router.get('/', getAllProjects);
 router.post('/', authorizeRole('client', 'admin'), createProject);
 router.get('/:id', getProjectById);
