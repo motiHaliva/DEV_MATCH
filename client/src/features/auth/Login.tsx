@@ -125,7 +125,7 @@ import { validateLoginForm } from "../../utils/formLoginValidate";
 import { useAuth } from "./AuthContext"; // ← הוסף את זה! 
 
 const API_BASE_URL =
-  import.meta.env. VITE_API_BASE_URL || "https://dev-match-oqi4.vercel. app";
+  import.meta.env.VITE_API_BASE_URL || "https://dev-match-oqi4.vercel.app";
 
 export const Login = () => {
   const navigate = useNavigate();
