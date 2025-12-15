@@ -122,13 +122,15 @@ import logo from "../../images/logo.png";
 import { toast } from "react-toastify";
 import { loginUser } from "../../api/authApi";
 import { validateLoginForm } from "../../utils/formLoginValidate";
+import { useAuth } from "./AuthContext"; // ← הוסף את זה! 
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://dev-match-oqi4.vercel.app";
+  import.meta.env. VITE_API_BASE_URL || "https://dev-match-oqi4.vercel. app";
 
 export const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { mutate } = useAuth(); // ← הוסף את זה!
 
   const [formData, setFormData] = useState({
     email: "",
@@ -152,7 +154,7 @@ export const Login = () => {
   }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e. target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -167,12 +169,16 @@ export const Login = () => {
 
     try {
       await loginUser(formData);
+      
+      // ✅ עדכן את המשתמש ב-context אחרי login מוצלח
+      await mutate();
+      
       toast.success("התחברת בהצלחה!");
       navigate("/profile");
     } catch (err: any) {
       const errorMessage =
         err.response?.data?.message ||
-        err.response?.data?.error ||
+        err.response?.data?. error ||
         "Network error or server not available";
       setError(errorMessage);
       toast.error(errorMessage);
@@ -183,7 +189,7 @@ export const Login = () => {
 
   // ✅ טיפול בGoogle Login
   const handleGoogleLogin = () => {
-    window.location.href = `${API_BASE_URL}/auth/google`;
+    window.location. href = `${API_BASE_URL}/auth/google`;
   };
 
   return (
