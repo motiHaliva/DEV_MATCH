@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Input from '../../../../ui/Input';
 import Button from '../../../../ui/Button';
-import { updateFreelancerProfile } from '../../../../api/freelancersApi';
+import { updateMyClientProfile } from '../../../../api/clientApi'
 import { FaUser, FaEnvelope, FaEdit } from 'react-icons/fa';
 import type { EditProfilePropsProject } from '../../type';
 import { toast } from "react-toastify";
@@ -36,7 +36,7 @@ const EditProfile = ({ profile, onProfileUpdated, onCancel }: EditProfilePropsPr
 
     setLoading(true);
     try {
-      const updatedData = await updateFreelancerProfile(formData);
+      const updatedData = await updateMyClientProfile(formData);
       onProfileUpdated(updatedData);
       toast.success("Profile updated successfully!");
     } catch (err: any) {
