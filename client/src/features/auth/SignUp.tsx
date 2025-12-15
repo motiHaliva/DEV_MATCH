@@ -72,14 +72,14 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex ">
       {isLoading ? (
 
         <Loader />
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="text-center mt-9 p-5 shadow-xl"
+          className="text-center mt-9  "
         >
           <img className="w-24 rounded-full mx-auto" src={logo} alt="logo" />
           <h1 className="text-2xl font-bold py-6">Create your account</h1>
