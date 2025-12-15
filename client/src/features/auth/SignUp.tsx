@@ -246,6 +246,8 @@ const SignUp = () => {
       const errorMessage =
         err?.response?.data?.error || "Something went wrong. Please try again.";
       setError(errorMessage);
+      console.log(errorMessage);
+      
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);

@@ -200,12 +200,12 @@
 // startServer();
 
 import express from 'express';
+import 'dotenv/config'; 
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import pool from './db.js';
 import { checkAndRunMigrations } from './autoMigrations.js';
 
-// ✅ Import routes - בדוק שאין רווחים! 
 import AuthRoutes from './routes/AuthRoutes.js';
 import AuthMiddleware from './middleware/AuthMiddleware.js';
 import userRoutes from './routes/UserRoutes.js';
@@ -240,7 +240,7 @@ app.use(cors({
     'https://dev-match-one.vercel.app',
     'https://dev-match-oqi4.vercel.app',
     'http://localhost:5173',
-    'http://localhost:4000'
+    'http://localhost:3000'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -341,7 +341,7 @@ console.log('✅ All routes registered');
 export default app;
 
 // ✅ Local development
-if (process.env. NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, async () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     
