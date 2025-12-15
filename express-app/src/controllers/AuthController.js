@@ -133,3 +133,38 @@ export const getCurrentUser = async (req, res) => {
     res.status(401).json({ error: "Unauthorized" });
   }
 };
+
+
+// ===================================
+// ✅ GOOGLE OAUTH HANDLERS
+// ===================================
+
+export const googleCallback = (req, res) => {
+  try {
+    // אם הגענו לכאן, passport אימת בהצלחה
+    const user = req.user;
+
+    if (!user) {
+      // Google authentication failed
+      return res.redirect(`${process.env.CLIENT_URL}/login? error=google_auth_failed`);
+    }
+
+    // יצירת JWT token
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // ✅ הפניה לפרונטאנד עם token
+    res.redirect(`${process.env.CLIENT_URL}/auth/google/success?token=${token}`);
+
+  } catch (error) {
+    console.error('❌ Google callback error:', error);
+    res.redirect(`${process.env.CLIENT_URL}/login?error=server_error`);
+  }
+};
+
+export const googleAuthFailed = (req, res) => {
+  res.redirect(`${process.env.CLIENT_URL}/login?error=no_account`);
+};

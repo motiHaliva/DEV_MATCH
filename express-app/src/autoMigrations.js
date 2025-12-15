@@ -411,6 +411,17 @@ const migrations = [
       ON CONFLICT (name) DO NOTHING;
     `
   }
+  ,
+    // 30. הוספת google_id לusers
+  {
+    name: '1735000000001_add-google-id-to-users',
+    sql: `
+      ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) DEFAULT NULL UNIQUE;
+      
+      CREATE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);
+    `
+  }
 ];
 
 // ✅ פונקציה להרצת migrations

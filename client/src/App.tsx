@@ -9,6 +9,7 @@ import ListProjects from './features/projects/ListProjects'
 import ListFreelancers from './features/freelancers/ListFreelancers'
 import ListPosts from './features/posts/ListPosts'
 import CreatePost from './features/posts/CreatePost'
+import GoogleCallback from './features/auth/GoogleCallback';
 import { AuthProvider } from './features/auth/AuthContext'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,6 +25,7 @@ const App = () => {
           <Route path="/freelancers" element={<ListFreelancers />} />
           <Route path="/projects" element={<ListProjects />} />
           <Route path="/posts" element={<ListPosts />} />
+          <Route path="/auth/google/success" element={<GoogleCallback />} />
           <Route
             path="/profile"
             element={

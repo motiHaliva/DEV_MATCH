@@ -218,6 +218,7 @@ import PostRoutes from './routes/PostRoutes.js';
 import PostCommentRoutes from './routes/PostCommentRoutes.js';
 import PostLikeRoutes from './routes/PostLikeRoutes.js';
 import freelancerReviewsRoutes from './routes/freelancerReviewsRoutes.js';
+import passport from './config/passport.js'; 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -246,11 +247,14 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+
+
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
+app.use(passport.initialize());
 
-// ✅ Root endpoint
 app.get('/', (req, res) => {
   res.json({
     message: '🚀 DEV_MATCH API is running! ',
