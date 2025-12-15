@@ -72,7 +72,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center w-full">
       {isLoading ? (
 
         <Loader />
