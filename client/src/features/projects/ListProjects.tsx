@@ -130,7 +130,6 @@ const ListProjects = () => {
         has_prev: (response.page || page) > 1
       });
 
-      // עדכן URL רק אם לא בטעינה ראשונית מURL
       if (updateUrl) {
         updateURL(searchTerm, filtersToUse, page);
       }

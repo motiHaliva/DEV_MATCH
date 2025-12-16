@@ -36,16 +36,17 @@ import {
   updateProject,
   deleteProject,
   getProjectById,
-  updateMyClientProfile
+  updateMyClientProfile,
+  getMyProjects
 } from '../controllers/ProjectController.js';
 
 const router = express. Router();
-
-
+ router.get('/me', authorizeRole('client'), getMyProjects);
+router.get('/:id', getProjectById);
 router.put('/profile', authorizeRole('client', 'admin'), updateMyClientProfile);
 router.get('/', getAllProjects);
 router.post('/', authorizeRole('client', 'admin'), createProject);
-router.get('/:id', getProjectById);
+
 router.put('/:id', authorizeSelfOrAdmin, updateProject);
 router.delete('/:id', authorizeSelfOrAdmin, deleteProject);
 

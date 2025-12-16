@@ -109,11 +109,15 @@ const Header = ({ onSearch }: { onSearch?: (text: string) => void }) => {
 
                             <ul className="mt-10 space-y-6 text-lg font-medium text-brand-blue">
                                 <div className="flex flex-row justify-between mt-4">
-                                    <img src={logo} alt="logo" className="w-40 h-8 mt-2" />
-                                    <div className="mt-1 w-10 h-10 rounded-full bg-gradient-to-r from-brand-blueLight to-brand-blue flex items-center justify-center text-white font-bold text-sm shadow-md cursor-pointer">
-                                        {currentUser ? getUserInitials(currentUser.firstname, currentUser.lastname) : "?"}
-                                    </div>
-                                </div>
+                    <img src={logo} alt="logo" className="w-40 h-8 mt-2" />
+                    <Link 
+                        to="/profile" 
+                        onClick={() => setOpen(false)}
+                        className="mt-1 w-10 h-10 rounded-full bg-gradient-to-r from-brand-blueLight to-brand-blue flex items-center justify-center text-white font-bold text-sm shadow-md cursor-pointer"
+                    >
+                        {currentUser ? getUserInitials(currentUser.firstname, currentUser.lastname) : "?"}
+                    </Link>
+                </div>
 
                                 <li>
                                     <Link to="/CreatePost" className="flex items-center gap-2">

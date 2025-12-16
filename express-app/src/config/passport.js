@@ -40,7 +40,6 @@ passport.use(
           return done(null, user);
         }
 
-        // ❌ משתמש לא קיים - דחה
         console.log('❌ User not found for email:', email);
         return done(null, false, { 
           message: 'No account found.  Please sign up first with email and password.' 
@@ -54,7 +53,7 @@ passport.use(
   )
 );
 
-// Serialize/Deserialize (לא ממש צריך עם JWT, אבל passport דורש)
+
 passport.serializeUser((user, done) => {
   done(null, user. id);
 });

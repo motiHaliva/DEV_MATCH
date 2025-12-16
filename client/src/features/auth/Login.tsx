@@ -193,10 +193,10 @@ export const Login = () => {
   };
 
   return (
-    <div className="">
+    <div className="flex justify-center">
       <form
         onSubmit={handleSubmit}
-        className=" text-center mt-9 p-5 shadow-xl md:w-1/2"
+        className=" text-center mt-9 p-5  md:w-1/2"
       >
         <img className="w-24 rounded-full mx-auto" src={logo} alt="logo" />
         <h1 className="text-2xl font-bold py-6">Welcome to Devmatch</h1>
