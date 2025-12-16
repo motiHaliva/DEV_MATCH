@@ -37,11 +37,13 @@ import {
   deleteProject,
   getProjectById,
   updateMyClientProfile,
-  getMyProjects
+  getMyProjects,
+  getClientProfile
 } from '../controllers/ProjectController.js';
 
 const router = express. Router();
  router.get('/me', authorizeRole('client'), getMyProjects);
+ router.get('/public/:client_id', getClientProfile); 
 router.get('/:id', getProjectById);
 router.put('/profile', authorizeRole('client', 'admin'), updateMyClientProfile);
 router.get('/', getAllProjects);
