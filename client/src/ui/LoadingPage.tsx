@@ -79,16 +79,16 @@ export default function LandingPage() {
 
     const features = [
         {
-            title: "Connect with Top Talent",
-            description: "Access thousands of skilled freelancers across all development fields"
+            title: "Smart Match System",
+            description: "Freelancers can apply to projects and clients can send direct match requests"
         },
         {
-            title: "Diverse Projects",
-            description: "From simple websites to complex enterprise applications"
+            title: "Project-Based Collaboration",
+            description: "Each match is connected to a specific project for clear and organized workflow"
         },
         {
-            title: "Secure Platform",
-            description: "Protected payments and quality assurance for every project"
+            title: "Direct Communication",
+            description: "Once matched, connect instantly via phone, WhatsApp or email"
         }
     ];
 
@@ -110,21 +110,19 @@ export default function LandingPage() {
                             <span className="bg-gradient-to-r from-brand-gradientStart to-brand-gradientEnd bg-clip-text text-transparent">
                                 DevMatch
                             </span>
-
                         </h1>
 
                         <p className="text-xl md:text-2xl mb-16 max-w-4xl mx-auto leading-relaxed opacity-90">
-                            The leading platform connecting clients with talented freelancers
+                            A smart matching platform connecting clients and freelancers
                             <br />
-                            for amazing development projects
+                            through real project-based collaboration
                         </p>
 
-                        {/* Stats */}
                         {!loading && (
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 max-w-4xl mx-auto">
-                                <StatCard value={stats.users} label="Active Users" delay={0} />
-                                <StatCard value={stats.freelancers} label="Expert Freelancers" delay={200} />
-                                <StatCard value={stats.projects} label="Projects Completed" delay={400} />
+                                <StatCard value={stats.users} label="Registered Users" delay={0} />
+                                <StatCard value={stats.freelancers} label="Active Freelancers" delay={200} />
+                                <StatCard value={stats.projects} label="Published Projects" delay={400} />
                             </div>
                         )}
 
@@ -136,29 +134,26 @@ export default function LandingPage() {
                             </div>
                         )}
 
-
                         <div className="flex flex-col items-center sm:flex-row gap-6 justify-center mb-20">
                             <Button
-                                text="Join Now"
+                                text="Create Account"
                                 variant="blue"
                                 onClick={() => navigate("/signup")}
                             />
                             <Button
-                                text="Sign In"
+                                text="Login to Dashboard"
                                 variant="blue"
                                 onClick={() => navigate("/login")}
-                                className=""
                             />
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Features Section */}
             <div className="bg-gray-50 pb-10">
                 <div className="max-w-7xl mx-auto px-6">
                     <h2 className="text-5xl font-bold text-center mb-16 text-blue-900">
-                        Why Choose <span className="">DevMatch</span>?
+                        How <span>DevMatch</span> Works
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -172,17 +167,16 @@ export default function LandingPage() {
                 </div>
             </div>
 
-            {/* Footer */}
             <footer className="bg-gray-100 py-12 border-t border-gray-200">
                 <div className="max-w-7xl mx-auto px-6 text-center">
                     <div className="flex justify-center mb-6">
                         <img src={logo} alt="DevMatch Logo" className="h-8 w-auto opacity-80" />
                     </div>
                     <p className="text-lg text-blue-900 mb-4">
-                        The leading platform for connecting clients and freelancers
+                        A project-driven platform for professional matching
                     </p>
                     <div className="text-sm text-blue-700 opacity-70">
-                        © 2024 DevMatch. All rights reserved.
+                        © 2024 DevMatch. Final Project - Software Engineering Practical Track
                     </div>
                 </div>
             </footer>
