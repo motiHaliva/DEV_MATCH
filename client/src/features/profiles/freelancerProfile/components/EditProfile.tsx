@@ -60,17 +60,11 @@ const EditProfile = ({
         const json = await res.json();
 
         const options = (json.result?.records || [])
-          // קח את שם העיר בעברית
           .map((row: any) => (row.city_name_he || row.city_name_en || '').trim())
-          // נפטרים מריקים
           .filter((name: string) => !!name)
-          // לפעמים יש "לא רשום" – לא צריך בטופס
           .filter((name: string) => name !== 'לא רשום')
-          // כפולים
           .filter((name: string, index: number, arr: string[]) => arr.indexOf(name) === index)
-          // מיון לפי עברית
           .sort((a: string, b: string) => a.localeCompare(b, 'he'))
-          // להפוך לאובייקט שה-select צריך
           .map((name: string) => ({
             label: name,
             value: name,
@@ -97,7 +91,6 @@ const EditProfile = ({
 
   return (
     <div className="space-y-8">
-      {/* Personal Info */}
       <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-8">
           <FaUser className="text-blue-600 text-xl" />
@@ -139,7 +132,6 @@ const EditProfile = ({
           />
 
 
-            {/* Location from API */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">
                 Location
@@ -170,7 +162,6 @@ const EditProfile = ({
         </div>
       </div>
 
-      {/* Professional Information Section */}
       <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-8">
           <FaBriefcase className="text-blue-600 text-xl" />
@@ -233,7 +224,7 @@ const EditProfile = ({
         </div>
       </div>
 
-      {/* Skills and Titles Section */}
+
       <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-8">
           <FaTags className="text-blue-600 text-xl" />
@@ -318,7 +309,7 @@ const EditProfile = ({
         )}
         <div className="flex justify-center">
           <Button
-            text={isNewProfile ? 'Create Profile ✨' : 'Save Changes 💾'}
+            text={isNewProfile ? 'Create Profile' : 'Save Changes'}
             variant="blue"
             onClick={onSave}
           />
